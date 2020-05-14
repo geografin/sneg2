@@ -6,8 +6,8 @@ from osgeo import gdal
 import subprocess
 
 #%% перевод из GEOTIFF в ASCII
-rpath='/home/jasny_jasen/Документы/PROJECTS/SNEG2/'
-wpath='/home/jasny_jasen/Документы/programming/sneg2/' 
+rpath='/home/hydronik/Документы/PROJECTS/SNEG2/'
+wpath='/home/hydronik/Документы/programming/sneg2/' 
 gdal.TranslateOptions(options=['of'])   #опции задаются отдельно
 gdal.Translate('input.asc', rpath+'n55_e043_1arc_v3.tif')  #конвертация в ascii
 
