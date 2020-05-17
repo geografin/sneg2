@@ -3,13 +3,59 @@
 from pcraster import *
 import numpy
 from osgeo import gdal
+from osgeo import gdal_merge as gdalmg 
+from osgeo import ogr
+from osgeo import osr
+from osgeo import gdal_array
+from osgeo import gdalconst
+import glob
 import subprocess
 
 #%% перевод из GEOTIFF в ASCII
-rpath='/home/hydronik/Документы/PROJECTS/SNEG2/'
-wpath='/home/hydronik/Документы/programming/sneg2/' 
-gdal.TranslateOptions(options=['of'])   #опции задаются отдельно
-gdal.Translate('input.asc', rpath+'n55_e043_1arc_v3.tif')  #конвертация в ascii
+path='/home/hydronik/Документы/PROJECTS/SNEG2/data/models_data/'
+ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+maskf='pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc'
+precf='pr_day_ACCESS1-0_historical_r1i1p1_1961-2005box.nc'
+tempf='tas_day_ACCESS1-0_historical_r1i1p1_1961-2005box.nc'
+mask=gdal.Open(ppath+maskf,gdalconst.GA_ReadOnly)
+src_prec=gdal.Open(path+precf,gdalconst.GA_ReadOnly)
+src_temp=gdal.Open(path+tempf,gdalconst.GA_ReadOnly)
+
+#%% Getting info from files
+def gdalinfo(file):
+    f_proj=file.GetProjection()
+    f_transform=file.GetGeoTransform()
+    f_xrange=file.RasterXSize
+    f_yrange=file.RasterYSize
+    f_setclonelist=(f_yrange,f_xrange,f_transform[1],f_transform[0],f_transform[3])
+    return f_proj,f_transform, f_xrange, f_yrange,f_setclonelist
+mask_info=gdalinfo(mask)
+prec_info=gdalinfo(src_prec)
+temp_info=gdalinfo(src_temp)
+print(mask_info,'\n',prec_info,'\n',temp_info)
+
+#%% Getting to file
+f=open(path+'info2.txt','w+')
+f.write(gdal.Info(src_prec))
+
+#%% Translating
+dst=gdal.GetDriverByName('netCDF').Create(ppath+'test1.nc',mask.RasterXSize,mask.RasterYSize,1,gdalconst.GDT_Float32)
+dst.SetGeoTransform(mask_info[1])
+dst.SetProjection(mask_info[0])
+ds=gdal.ReprojectImage(src_prec, dst, prec_info[0],mask_info[0], gdalconst.GRA_Bilinear) 
+del ds,dst
+
+#%%
+
+file=gdal.Open(ppath+'test1.nc')
+testinfo=gdalinfo(file)
+print(testinfo)
+print(mask_info)
+array1=file.ReadAsArray()
+array2=mask.ReadAsArray()
+print(array1)
+print('NEXT----------------')
+print(array2)
 
 #%% создание пустой карты с параметрами ASCII рельефа 
 smmd='mapattr -s -R 3601 -C 1801 -P yb2t -x 42.999722222222 -y 54.999861111111 -l 0.0005 mask.map'
