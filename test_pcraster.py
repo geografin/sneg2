@@ -39,23 +39,34 @@ f=open(path+'info2.txt','w+')
 f.write(gdal.Info(src_prec))
 
 #%% Translating
+
 dst=gdal.GetDriverByName('netCDF').Create(ppath+'test1.nc',mask.RasterXSize,mask.RasterYSize,1,gdalconst.GDT_Float32)
 dst.SetGeoTransform(mask_info[1])
 dst.SetProjection(mask_info[0])
 ds=gdal.ReprojectImage(src_prec, dst, prec_info[0],mask_info[0], gdalconst.GRA_Bilinear) 
 del ds,dst
 
+#%% Warp
+
+options=gdal.WarpOptions(format='netCDF',xRes=mask.RasterXSize,yRes=mask.RasterYSize,width=mask.GetGeoTransform()[1],resampleAlg=gdal.GRA_Bilinear)
+dest=gdal.Warp( dst,src_prec, options=options)
+dest=None
+dst=None
+
+#%%
+test=gdal.Open(ppath+'test2.nc')
+print(gdalinfo(test))
 #%%
 
 file=gdal.Open(ppath+'test1.nc')
-testinfo=gdalinfo(file)
-print(testinfo)
-print(mask_info)
-array1=file.ReadAsArray()
-array2=mask.ReadAsArray()
-print(array1)
-print('NEXT----------------')
-print(array2)
+print(file.RasterCount)
+i=0
+for count in range(file.RasterCount):
+    print(i)
+    i+=1
+    band=file.GetRasterBand(count)
+    print(band.GetMetadata())
+
 
 #%% создание пустой карты с параметрами ASCII рельефа 
 smmd='mapattr -s -R 3601 -C 1801 -P yb2t -x 42.999722222222 -y 54.999861111111 -l 0.0005 mask.map'
