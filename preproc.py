@@ -1,15 +1,9 @@
 #%% Разработка алгоритма SNEG-2
-from pcraster import *
-import numpy
-from osgeo import gdal
-from osgeo import gdal_merge as gdalmg 
+from osgeo import gdal 
 from osgeo import ogr
 from osgeo import osr
 from osgeo import gdal_array
 from osgeo import gdalconst
-import glob
-import subprocess
-import netCDF4
 from cdo import Cdo,CDOException,CdoTempfileStore
 import datetime as dt
 path='/home/hydronik/Документы/PROJECTS/SNEG2/data/models_data/'
@@ -29,7 +23,7 @@ def regridcdo(infile,outfile):
 regridcdo(path+precf,ppath+'regridded_prec.nc')
 regridcdo(path+tempf,ppath+'regridded_temp.nc')
 
-#%%main preproc
+#%%main preproc for model files nc
 #gettin index from file
 def gettintime(file):
     startingday=dt.datetime(1,1,1)
@@ -47,7 +41,7 @@ def getindex(data,array):
 # cycle for create map files from netcdf
 def createmaps(src,param):
     test=gdal.Open(src,gdalconst.GA_ReadOnly)
-    data1=dt.datetime(1981,1,1)
+    data1=dt.datetime(1981,1,1) #даты 1 2 надо вынести во входящие данные
     data2=data1+dt.timedelta(days=30)
     index1=getindex(data1,gettintime(test))
     index2=getindex(data2,gettintime(test))
@@ -64,4 +58,74 @@ srcfiles=(ppath+'regridded_temp.nc',ppath+'regridded_prec.nc')
 createmaps(srcfiles[0],'temp')
 createmaps(srcfiles[1],'prec')
 
+#%%preproc for txt input files
+#generates tss files
+import numpy as np
+import glob
+prectss=open(ppath+'prec.tss','w')
+temptss=open(ppath+'temp.tss','w')
+date1=dt.datetime(1981,1,1)
+ind=[]
+temp=[]
+prec=[]
+for file in glob.glob(ppath+'wr39399/wr*.txt'):
+    input=open(file,'r') #открываем каждый файл
+    t=0
+    daterev=date1
+    precc=[]
+    tempp=[]
+    for line in input:
+        if t==0:
+            ind.append(line.split()[0]) #записали номер станции в массив
+            t=1
+        yr,mo,da=int(line.split()[1]),int(line.split()[2]),int(line.split()[3])
+        date=dt.datetime(yr,mo,da) #получили дату из строки файла
+        if date>=date1:
+            datelag=abs(date-daterev).days #разница между предыдущей датой и текущей
+            if datelag>1: #если разрыв больше суток - заполняем NaN
+                for i in range(1,datelag):
+                    precc.append(np.nan)
+                    tempp.append(np.nan)
+            else:
+                tempp.append(float(line.split()[4]))
+                precc.append(float(line.split()[5]))
+        daterev=date
+    temp.append(tempp)
+    prec.append(precc)
+    input.close()
+#Пишем файл tss
+temptss.write('Температуры для {:d} станций'.format(len(ind))+'\n')
+temptss.write(str(int(len(ind))+1)+'\n')
+temptss.write('time'+'\n')
+for st in ind: # для каждой станции
+    temptss.write('station'+'\t'+str(st)+'\n') #пишем список станций по индексам
+timestr=list(range(1,len(temp[0])+1))
+print(type(timestr[2]))
+#mt=['%1.2f'for x in range()]
+fmt=(['%d']+['%1.2f']*len(temp))
+print(len(temp))
+print(fmt)
+z=[timestr]+temp
+print(type(z[0][0]),type(z[1][0]),type(z[2][0]))
+np.savetxt(temptss,np.transpose(z),fmt=fmt) #сохраняем массивы как таблицу: transpose чтобы не по строкам а по столбцам
+temptss.close()
+prectss.close()
 
+#%%numpy
+import numpy as np
+test=open(ppath+'test.tss','w')
+test.write('Это начало...'+'\n')
+test.write('123442'+'\n')
+x=[1,2,4,5,23,5,5,67,8]
+y=[[65,45,7,56,68,68,454,4,34],[99,56,7,56,68,68,7,4,34]]
+z=[x]+y
+print(z)
+np.savetxt(test,np.transpose(z),fmt=('%d','%1.1f','%1.1f'))
+test.close()
+
+
+
+
+
+
+# %%
