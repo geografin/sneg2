@@ -11,9 +11,9 @@ import glob
 
 #%%cdoregrid
 
-def regridcdo(infile,outfile):
+def regridcdo(infile,outfile,maskfile):
     cdo=Cdo()
-    cdo.remapbil(ppath+maskf,input=infile,output=outfile)
+    cdo.remapbil(maskfile,input=infile,output=outfile)
 
 #%%main preproc for model files nc
 #gettin index from file
@@ -30,23 +30,27 @@ def getindex(data,array):
     ind=array.index(datacorr)+1
     return ind,data
 # cycle for create map files from netcdf
-def createmaps(src,param):
+def createmaps(src,param,data1,data2,mappath):
     source=gdal.Open(src,gdalconst.GA_ReadOnly)
-    data1=dt.datetime(1981,1,1) #даты 1 2 надо вынести во входящие данные
-    data2=data1+dt.timedelta(days=30)
     index1=getindex(data1,gettintime(source))
     index2=getindex(data2,gettintime(source))
     if param=='temp':
-        mapprpath='tas_map/'+param
+        mapprpath='tas_map/'+param+'0000'
     else:
-        mapprpath='pr_map/'+param
+        mapprpath='pr_map/'+param+'0000'
     for index in range(index1[0],index2[0]):
         dataf=index1[1]+dt.timedelta(index-index1[0])
         dataf=dt.datetime.strftime(dataf,'%Y_%m_%d')
         optt=gdal.TranslateOptions(format='PCRaster',bandList=[index],outputType=gdalconst.GDT_Float32,metadataOptions='VS_SCALAR')
-        gdal.Translate(mappath+mapprpath+'0000.map',source,options=optt)
-def createclone():
-    
+        gdal.Translate(mappath+mapprpath+'.{:03d}.map'.format(index-index1[0]),source,options=optt)
+    print('Созданы .map файлы для модели') 
+    print('Индекс 0000 соответствует дате {:%Y-%m-%d}'.format(index1[1])) 
+    print('Индекс {:d} соответствует дате {:%Y-%m-%d}'.format(index-index1[0],index2[1]))       
+def createclone(src,path):
+    source=gdal.Open(src,gdalconst.GA_ReadOnly)
+    optt=gdal.TranslateOptions(format='PCRaster',bandList=[1],outputType=gdalconst.GDT_Float32,metadataOptions='VS_SCALAR')
+    gdal.Translate(path+'clone.map',source,options=optt)
+
 #%%preproc for txt input files
 #generates tss files
 def tsswriter(stationfiles):
@@ -83,7 +87,7 @@ def tsswriter(stationfiles):
         input.close()
     #Пишем файл tss:
     for fl in [temptss,prectss]:
-        if fl=temptss:
+        if fl==temptss:
             par = 'Температуры'+''
         else:
             par = 'Осадки'+''

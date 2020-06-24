@@ -10,60 +10,64 @@ class Snow2Model(DynamicModel):
     def __init__(self,clonemap):
         DynamicModel.__init__(self)
         setclone(clonemap)
-        a=1.8 # Зависит от леса и поля и от оттепель-весна
-        b=0.13/(1-0.13)
-        c=20
-        pathsave='/home/hydronik/Документы/PROJECTS/SNEG2/data/results/'
+        self.a=1.8 # Зависит от леса и поля и от оттепель-весна
+        self.b=0.13/(1-0.13)
+        self.c=20
+        self.pathsave='/results/'
+        self.tpath='/rez/tas_map/'
+        self.prpath='/rez/pr_map/'
 
     def initial(self):
-        start=0
-        TEMP=0
-        LiqSnowpack=0
-        LiqSnowpackNext=0
-        SnowCapacity=0
-        SolSnowpack=0
-        SnowFrost=0
-        
+        self.start=0
+        self.TempSum=scalar(0)
+        self.LiqSnowpack=scalar(0)
+        self.LiqSnowpackNext=scalar(0)
+        self.SnowCapacity=scalar(0)
+        self.SolSnowpack=scalar(0)
+        self.Snowpack=scalar(0)
+        self.SnowFrost=scalar(0)
+        self.map1=scalar(0)
+        self.mask=scalar(0)
 
 
     def dynamic(self):
-        TEMP = readmap(temp) # Чтение стэка файлов температуры формата temp0000.001
-        if start == 0:
-            if mapminimum(TEMP)<0:
-                start=1
-                map1=ifthen(TEMP<-9999)
-        else:        
-            PREC = readmap(prec) # Чтение стэка файлов температуры формата prec0000.001
-            # начало HOLOD
-            TempSum = ifthenelse(TEMP <= 0, TempSum + abs(TEMP), 0)
-            SnowFrost = c*sqrt(TempSum)
-            LiqSnowpack = ifthenelse(TEMP <= 0 & SnowFrost < Snowpack,LiqSnowpackNext*(1 - SnowFrost/Snowpack),0)
-            LiqSnowpackNext = ifthenelse(TEMP <= 0 & SnowFrost < Snowpack, LiqSnowpack, 0)
-            Snowpack = ifthenelse(TEMP <= 0, Snowpack + PREC, Snowpack)
-            map1 = ifthenelse(Snowpack > 0, 1, map1)
-            SolSnowpack = ifthenelse(TEMP <= 0, Snowpack - LiqSnowpackNext, SolSnowpack - a*TEMP)
-            #начало TEPLO
-            Flow = ifthenelse(TEMP > 0 & SolSnowpack <= 0, Snowpack + PREC, 0)
-            Snowpack = ifthenelse(TEMP > 0 & SolSnowpack <= 0, 0, Snowpack)
-            # начало VODA
-            LiqSnowpack = ifthenelse(TEMP > 0 & SolSnowpack > 0, LiqSnowpackNext + a*TEMP + PREC, LiqSnowpack)
-            LiqSnowpackNext = ifthenelse (TEMP > 0 & SolSnowpack <= 0, 0, LiqSnowpackNext)
-            SnowCapacity = ifthenelse (TEMP > 0 & SolSnowpack > 0, b*SolSnowpack, 0)
-            Snowpack = ifthenelse(TEMP > 0 & LiqSnowpack > SnowCapacity, Snowpack + SnowCapacity, Snowpack + PREC)
-            map2 = ifthen(TEMP > 0 & LiqSnowpack > SnowCapacity)
-            Flow = ifthenelse(TEMP > 0 & LiqSnowpack > SnowCapacity, LiqSnowpack - SnowCapacity, 0)
-            LiqSnowpackNext = ifthenelse(TEMP > 0 & LiqSnowpack > SnowCapacity, SnowCapacity,LiqSnowpack)
-            #
-            map3 = ifthen(map1 & map2)
-            map3 = cover(~ map3, 57)
-            mask = ifthenelse(mask==57,mask,map3) 
-            # сохранение результатов
-            Snowpack = ifthenelse(mask==57,0,Snowpack)
-            Flow = ifthenelse(mask==57,0,Flow)
-            report(Snowpack, pathsave+'snow')
-            report(Flow, pathsave+'flow')
-
-
-
-
-
+        self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
+        mintemp=mapminimum(self.TEMP)
+        self.start=ifthenelse(mintemp<0,scalar(1),self.start)
+        self.PREC = self.readmap(os.getcwd()+self.prpath+'prec')
+        # начало HOLOD   
+        TEMP=self.TEMP
+        PREC=self.PREC
+        a=self.a
+        b=self.b
+        c=self.c
+        self.TempSum = ifthenelse(TEMP <= 0, self.TempSum + abs(TEMP), 0)
+        self.SnowFrost = c*sqrt(self.TempSum)
+        self.LiqSnowpack = ifthenelse(TEMP <= 0 & self.SnowFrost < self.Snowpack,self.LiqSnowpackNext*(1 - self.SnowFrost/self.Snowpack),0)
+        self.LiqSnowpackNext = ifthenelse(TEMP <= 0 & ifthen(self.SnowFrost < self.Snowpack,scalar(1))==1, self.LiqSnowpack, 0)
+        self.Snowpack = ifthenelse(TEMP <= 0, self.Snowpack + PREC, self.Snowpack)
+        self.map1 = ifthenelse(self.Snowpack > 0, 1, self.map1)
+        self.SolSnowpack = ifthenelse(TEMP <= 0, self.Snowpack - self.LiqSnowpackNext, self.SolSnowpack - a*TEMP)
+        #начало TEPLO
+        self.Flow = ifthenelse(TEMP > 0 & self.SolSnowpack <= 0, self.Snowpack + PREC, 0)
+        self.Snowpack = ifthenelse(TEMP > 0 & self.SolSnowpack <= 0, 0, self.Snowpack)
+        # начало VODA
+        self.LiqSnowpack = ifthenelse(TEMP > 0 & self.SolSnowpack > 0, self.LiqSnowpackNext + a*TEMP + PREC, self.LiqSnowpack)
+        self.LiqSnowpackNext = ifthenelse (TEMP > 0 & self.SolSnowpack <= 0, 0, self.LiqSnowpackNext)
+        self.SnowCapacity = ifthenelse (TEMP > 0 & self.SolSnowpack > 0, b*self.SolSnowpack, 0)
+        self.Snowpack = ifthenelse(TEMP > 0 & self.LiqSnowpack > self.SnowCapacity, self.Snowpack + self.SnowCapacity, self.Snowpack + PREC)
+        self.map2 = ifthen(TEMP > 0 & self.LiqSnowpack > self.SnowCapacity)
+        self.Flow = ifthenelse(TEMP > 0 & self.LiqSnowpack > self.SnowCapacity, self.LiqSnowpack - self.SnowCapacity, 0)
+        self.LiqSnowpackNext = ifthenelse(TEMP > 0 & self.LiqSnowpack > self.SnowCapacity, self.SnowCapacity, self.LiqSnowpack)
+        #
+        map3 = ifthen(map1 & map2)
+        map3 = cover(~ map3, 57)
+        self.mask = ifthenelse(self.mask==57,self.mask,map3) 
+        # сохранение результатов
+        self.Snowpack = ifthenelse(self.mask==57,0,self.Snowpack)
+        self.Flow = ifthenelse(self.mask==57,0,self.Flow)
+        self.Snowpack=ifthen(self.start==1,self.Snowpack)
+        self.Flow=ifthen(self.start==1,self.Flow)
+        self.report(self.Snowpack, os.getcwd()+self.pathsave+'snow')
+        self.report(self.Flow, os.getcwd()+self.pathsave+'flow')
+       
