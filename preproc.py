@@ -11,9 +11,19 @@ import glob
 
 #%%cdoregrid
 
-def regridcdo(infile,outfile,maskfile):
+def regridcdo(infile,outfile,maskfile,temp):
     cdo=Cdo()
+    if temp==1:
+        temptemp=cdo.subc(273,input=infile)
+        infile=temptemp
+    else:
+        temptemp=cdo.mulc(8640,input=infile)
+        infile=temptemp
     cdo.remapbil(maskfile,input=infile,output=outfile)
+
+#%%
+cdo=Cdo()
+help(cdo.subc)
 
 #%%main preproc for model files nc
 #gettin index from file
