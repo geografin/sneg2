@@ -16,6 +16,7 @@ class Snow2Model(DynamicModel):
         self.pathsave=pathsave
         self.tpath='/rez/tas_map/'
         self.prpath='/rez/pr_map/'
+        self.ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
         self.currentyear=currentyear
 
     def initial(self):
@@ -31,7 +32,9 @@ class Snow2Model(DynamicModel):
         self.mask=boolean(0)
         self.OttTemp=scalar(0)
         self.SpringMask=boolean(0)
-
+        self.stationmap=self.ppath+'/stations.map'
+        self.SnowPackTime=TimeoutputTimeseries(os.getcwd()+self.pathsave+'snowpack.tss',self,self.stationmap,noHeader=False)
+        self.SnowPackTime=TimeoutputTimeseries(os.getcwd()+self.pathsave+'',self,self.stationmap,noHeader=False)
 
     def dynamic(self):
         self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
@@ -91,6 +94,8 @@ class Snow2Model(DynamicModel):
         
         Snow=ifthen(self.mask & self.start,self.Snowpack)
         Flowr=ifthen(self.mask & self.start,self.Flow)
+        # репортить tss по снегу, водоотдаче, стоку
+
         self.report(Snow, os.getcwd()+self.pathsave+'snow')
         self.report(Flowr, os.getcwd()+self.pathsave+'flow')
-        # ПЕРЕБИРАТЬ (УБИРАТЬ) УСЛОВИЯ ПОКА НЕ НАЙДЕМ ОШИБКУ
+        

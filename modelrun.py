@@ -4,6 +4,7 @@ from sneg2_alg import *
 from pcraster.framework import *
 import os
 import calendar
+import pandas as pd
 #%%
 os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/')
 print(os.getcwd())
@@ -25,7 +26,18 @@ mappath='/home/hydronik/Документы/PROJECTS/SNEG2/data/rez/'
 srcfiles=(ppath+'regridded_temp.nc',ppath+'regridded_prec.nc')
 #%%create clonemap file
 createclone(ppath+'regridded_temp.nc',ppath)
+#%%create tss
 stationfiles=ppath+'wr39399/wr*.txt'
+tsswriter(stationfiles,ppath)
+
+#%% postprocessing - получение данных за год
+def postprocess(yr):
+    # чтение файла: определяем кол-=во строк станций
+    # считываем станции по порядку в массив
+    # считываем шаги модели и переводим в даты - пишем в массив дат
+    # считываем для каждой станции значения
+    # объединяем в  DataFrame
+    # ищем средние, даты, максимумы
 
 #%% RUN THE MODEL
 for yr in range(1980,1983,1):

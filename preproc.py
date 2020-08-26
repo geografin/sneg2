@@ -63,7 +63,7 @@ def createclone(src,path):
 
 #%%preproc for txt input files
 #generates tss files
-def tsswriter(stationfiles):
+def tsswriter(stationfiles,ppath):
     prectss=open(ppath+'prec.tss','w')
     temptss=open(ppath+'temp.tss','w')
     date1=dt.datetime(1981,1,1)
@@ -98,14 +98,14 @@ def tsswriter(stationfiles):
     #Пишем файл tss:
     for fl in [temptss,prectss]:
         if fl==temptss:
-            par = 'Температуры'+''
+            par = 'Температуры'+' '
         else:
-            par = 'Осадки'+''
+            par = 'Осадки'+' '
         fl.write(par+'для {:d} станций'.format(len(ind))+'\n')
         fl.write(str(int(len(ind))+1)+'\n')
         fl.write('time'+'\n')
         for st in ind: # для каждой станции
-            fl.write('station'+'\t'+str(st)+'\n') #пишем список станций по индексам
+            fl.write(str(st)+'\n') #пишем список станций по индексам
         timestr=list(range(1,len(temp[0])+1))
         print(type(timestr[2]))
         #mt=['%1.2f'for x in range()]
@@ -117,3 +117,4 @@ def tsswriter(stationfiles):
         np.savetxt(fl,np.transpose(z),fmt=fmt) #сохраняем массивы как таблицу: transpose чтобы не по строкам а по столбцам
     temptss.close()
     prectss.close()
+    return None
