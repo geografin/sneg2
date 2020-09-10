@@ -5,6 +5,8 @@ from pcraster.framework import *
 import os
 import calendar
 import pandas as pd
+%reload_ext autoreload
+%autoreload 2
 #%%
 os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/')
 print(os.getcwd())
@@ -29,6 +31,7 @@ createclone(ppath+'regridded_temp.nc',ppath)
 #%%create tss
 stationfiles=ppath+'wr39399/wr*.txt'
 tsswriter(stationfiles,ppath)
+#%%create map of stations
 
 #%% postprocessing - получение данных за год
 def postprocess(yr):
@@ -66,3 +69,7 @@ aguila(os.getcwd()+'/rez/tas_map/temp0000.003.map')
 #%%
 file=gdal.Open(path+precf)
 print(file.GetMetadata())
+
+#%% 
+t=os.path.abspath('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+str(1888)+'snow.tss')
+t

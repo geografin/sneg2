@@ -32,9 +32,9 @@ class Snow2Model(DynamicModel):
         self.mask=boolean(0)
         self.OttTemp=scalar(0)
         self.SpringMask=boolean(0)
-        self.stationmap=self.ppath+'/stations.map'
-        self.SnowPackTime=TimeoutputTimeseries(os.getcwd()+self.pathsave+'snowpack.tss',self,self.stationmap,noHeader=False)
-        self.SnowPackTime=TimeoutputTimeseries(os.getcwd()+self.pathsave+'',self,self.stationmap,noHeader=False)
+        self.stationmap=readmap(self.ppath+'/stations.map')
+        self.SnowPackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'snow',self,self.stationmap,noHeader=False)
+        self.FlowTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'flow',self,self.stationmap,noHeader=False)
 
     def dynamic(self):
         self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
@@ -95,7 +95,8 @@ class Snow2Model(DynamicModel):
         Snow=ifthen(self.mask & self.start,self.Snowpack)
         Flowr=ifthen(self.mask & self.start,self.Flow)
         # репортить tss по снегу, водоотдаче, стоку
-
-        self.report(Snow, os.getcwd()+self.pathsave+'snow')
-        self.report(Flowr, os.getcwd()+self.pathsave+'flow')
+        self.SnowPackTime.sample(Snow)
+        self.FlowTime.sample(Flowr)
+        #self.report(Snow, os.getcwd()+self.pathsave+'snow')
+        #self.report(Flowr, os.getcwd()+self.pathsave+'flow')
         

@@ -118,3 +118,26 @@ def tsswriter(stationfiles,ppath):
     temptss.close()
     prectss.close()
     return None
+
+#%% получение координат станций
+import pandas as pd 
+table=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/swe3decadeFEBfield-forestETR19662016.csv', 
+                header=0, parse_dates=True, sep=';', decimal=',',engine='python')
+erronic=[8,29,33,36,44,47,50,55,66, 69,85,91,96,99,107,109,113]
+#table=table[(table['x_lon'].values > 22) & (table['x_lon'].values < 68)]
+#table=table[(table['y_lat'].values > 39) & (table['y_lat']< 72)]
+table['id2']=table.index+1
+table=table[~table['id2'].isin(erronic)]
+table.reset_index(drop=True,inplace=True)
+table['id']=table.index+1
+table1=table[['x_lon','y_lat','id']]
+print(table1)
+table2=table[['id','x_lon','y_lat','index']]
+#table['index']=table['index']-20000
+
+table1.to_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/stations.txt',sep='\t',decimal='.',index=False,header=False)
+table2.to_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/stations_leg.txt',sep='\t',decimal='.',index=False,header=True)
+#%%создание файла станций map
+import subprocess
+ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+subprocess.run('/home/hydronik/miniconda3/pkgs/pcraster-4.3.0-py37h9b3db4b_2/bin/col2map /home/hydronik/Документы/PROJECTS/SNEG2/data/stations.txt /home/hydronik/Документы/PROJECTS/SNEG2/data/stations.map --clone /home/hydronik/Документы/PROJECTS/SNEG2/data/clone.map -N --large',shell=True,capture_output=True)
