@@ -34,16 +34,78 @@ tsswriter(stationfiles,ppath)
 #%%create map of stations
 
 #%% postprocessing - получение данных за год
-def postprocess(yr):
+import pandas as pd
+import datetime as dt
+import matplotlib
+import matplotlib.pyplot as plt
+import calendar
+%matplotlib inline
+def readtss(path,yr):
+    
+    
+    with open(path) as f:
+        number = int(f.readlines()[1])
+        #linn = f.readlines()[110].split()
+        colnumbers = [str(i) for i in range(1,number)]
+        print(['timestep']+colnumbers)
+        #print(len(linn))
+    if calendar.isleap(int(yr)+1)==True:
+        per=366
+    else:
+        per=365
+    df = pd.read_csv(path, skiprows=number+2, sep='\s+', \
+    names=['timestep']+colnumbers,  decimal='.',engine='python')
+    df = df.where(df < 1000000)
+    df['dates']=pd.date_range(dt.datetime(int(yr),7,1),periods=per)
+    df=df.set_index(['dates'])
     # чтение файла: определяем кол-=во строк станций
     # считываем станции по порядку в массив
     # считываем шаги модели и переводим в даты - пишем в массив дат
     # считываем для каждой станции значения
     # объединяем в  DataFrame
-    # ищем средние, даты, максимумы
+    # ищем средние, даты, макс
+    return df
+
+def plotter(stationname):
+    yr='1981'
+    stationname=str(stationname)
+    first = '1981-09-01'
+    end='1982-06-25'
+    os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data')
+    pathsnow = os.getcwd() + '/result_'+yr+'/'+yr+'snow.tss'
+    pathflow = os.getcwd() + '/result_'+yr+'/'+yr+'flow.tss'
+    pathtemp = os.getcwd() + '/result_'+yr+'/'+yr+'temp.tss'
+    pathprec = os.getcwd() + '/result_'+yr+'/'+yr+'prec.tss'
+    pathsols = os.getcwd() + '/result_'+yr+'/'+yr+'sols.tss'
+    pathliqs = os.getcwd() + '/result_'+yr+'/'+yr+'liqs.tss'
+    snowdf = readtss(pathsnow,yr)[first:end]
+    flowdf = readtss(pathflow,yr)[first:end]
+    tempdf = readtss(pathtemp,yr)[first:end]
+    precdf = readtss(pathprec,yr)[first:end]
+    solsdf = readtss(pathsols,yr)[first:end]
+    liqsdf = readtss(pathliqs,yr)[first:end]
+    #precdf = precdf.mul(10)
+    fig,ax = plt.subplots()
+    ax.plot(flowdf.index,flowdf[stationname],label='flow')
+
+    plt.xticks(rotation='vertical')
+    plt.grid(True)
+    plt.legend()
+    ax2 = ax.twinx()
+    ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
+    #ax2.bar(precdf.index,precdf[stationname],label='prec')
+    ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
+
+    plt.legend()
+    #plt.show()
+    fig.savefig(os.getcwd() + '/result_'+yr+'/'+stationname+'_plot.jpeg',format='jpeg',dpi=100)
+    return None
+
+for station in range(1,67):
+    plotter(station)
 
 #%% RUN THE MODEL
-for yr in range(1980,1983,1):
+for yr in range(1979,1982,1):
     data1=dt.datetime(yr,7,1) #даты 1 2 надо вынести во входящие данные
     #data2=data1+dt.timedelta(days=30)
     data2=dt.datetime(yr+1,7,15)
@@ -61,15 +123,18 @@ for yr in range(1980,1983,1):
     dynModel.run()
 
 #%% show
+os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data')
 pathsave='/results/'
 #aguila(os.getcwd()+'/rez/pr_map/prec0000.001.map')
-aguila(os.getcwd()+'/rez/tas_map/temp0000.003.map')
+aguila(os.getcwd()+'/result_1980/mask0000')
 #aguila(os.getcwd()+pathsave+'map20000.001')
 
-#%%
-file=gdal.Open(path+precf)
-print(file.GetMetadata())
-
+#%% test
+files = '/home/hydronik/Документы/PROJECTS/SNEG2/data/stationdata/test.txt'
+with open(files,'r') as f:
+    for line in f:
+        #yr,mo,da,t,pr=int(line.split('\t')[1]),int(line.split('\t')[2]),int(line.split('\t')[3]),float(line.split('\t')[4]),float(line.split('\t')[5])
+        print(len(line.strip('\n').split()))
 #%% 
 t=os.path.abspath('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+str(1888)+'snow.tss')
 t

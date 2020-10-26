@@ -17,6 +17,8 @@ class Snow2Model(DynamicModel):
         self.tpath='/rez/tas_map/'
         self.prpath='/rez/pr_map/'
         self.ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+        self.ttimepath=self.ppath+'temp.tss'
+        self.ptimepath=self.ppath+'prec.tss'
         self.currentyear=currentyear
 
     def initial(self):
@@ -27,76 +29,94 @@ class Snow2Model(DynamicModel):
         self.SnowCapacity=scalar(0)
         self.SolSnowpack=scalar(0)
         self.Snowpack=scalar(0)
-        self.SnowFrost=scalar(0)
+        
         self.map1=boolean(0)
+        self.map2=boolean(0)
         self.mask=boolean(0)
         self.OttTemp=scalar(0)
         self.SpringMask=boolean(0)
-        self.stationmap=readmap(self.ppath+'/stations.map')
+        self.stationmap=readmap(self.ppath+'stations.map')
         self.SnowPackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'snow',self,self.stationmap,noHeader=False)
         self.FlowTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'flow',self,self.stationmap,noHeader=False)
-
+        self.TempTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'temp',self,self.stationmap,noHeader=False)
+        self.SolSnowpackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'sols',self,self.stationmap,noHeader=False)
+        self.PrecTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'prec',self,self.stationmap,noHeader=False)
+        self.LiqTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'liqs',self,self.stationmap,noHeader=False)
+        self.FrostTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'frost',self,self.stationmap,noHeader=False)
     def dynamic(self):
-        self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
+        #self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
+        self.TEMP = timeinputscalar(self.ttimepath,self.stationmap)
         mintemp=mapminimum(self.TEMP)
         #print(float(mapminimum(self.TEMP)))
-        self.start=ifthenelse(self.TEMP<scalar(0),boolean(1),self.start)
+        self.start=ifthenelse(self.TEMP < scalar(0),boolean(1),self.start)
         
-        self.PREC = self.readmap(os.getcwd()+self.prpath+'prec')
+        #self.PREC = self.readmap(os.getcwd()+self.prpath+'prec')
+        self.PREC = timeinputscalar(self.ptimepath,self.stationmap)
         # начало HOLOD   
         TEMP=self.TEMP
         PREC=self.PREC
+        self.TempTime.sample(TEMP)
+        self.PrecTime.sample(PREC)
         a=self.a
         b=self.b
         c=self.c
         self.TempSum = ifthenelse((TEMP <= scalar(0)), self.TempSum + abs(TEMP), scalar(0))
+        #Условие на оттепели
         self.OttTemp = ifthenelse((TEMP > scalar(0)),self.OttTemp + scalar(1), scalar(0))
-        self.SpringMask = self.OttTemp > scalar(3)
+        self.OttTemp = ifthenelse(self.map1 & (int(time()) > 140),self.OttTemp, scalar(0))
+        self.SpringMask = ifthenelse((self.OttTemp > scalar(5)), boolean(1),self.SpringMask)
         #self.report(self.TempSum, os.getcwd()+self.pathsave+'tempsum')
-        self.SnowFrost = c*sqrt(self.TempSum)
+        SnowFrost = c*sqrt(self.TempSum)
         #--------------- до сих пор пишется нормально! -----
         #self.report(self.SnowFrost, os.getcwd()+self.pathsave+'frost')
         
-        test=(TEMP <= scalar(0)) & (self.SnowFrost < self.Snowpack)
+        test=(TEMP <= scalar(0)) & (SnowFrost < self.Snowpack)
         Snowpackone=ifthenelse(test,self.Snowpack,scalar(1))
-        condTrue=self.LiqSnowpackNext*(scalar(1) - (self.SnowFrost / Snowpackone))
+        condTrue=self.LiqSnowpackNext*(scalar(1) - (SnowFrost / Snowpackone))
         self.LiqSnowpack = ifthenelse(test,condTrue, scalar(0))
         #self.LiqSnowpack = ifthenelse((TEMP <= scalar(0)) & (self.SnowFrost < self.Snowpack),self.LiqSnowpackNext*(scalar(1) - self.SnowFrost / self.Snowpack), scalar(0))
-        self.report(self.LiqSnowpack, os.getcwd()+self.pathsave+'liqsn')
-        self.LiqSnowpackNext = ifthenelse((TEMP <= scalar(0)) & (self.SnowFrost < self.Snowpack), self.LiqSnowpack, scalar(0))
+        #self.report(self.LiqSnowpack, os.getcwd()+self.pathsave+'liqsn')
+        self.LiqSnowpackNext = ifthenelse((TEMP <= scalar(0)) & (SnowFrost < self.Snowpack), self.LiqSnowpack, scalar(0))
         self.Snowpack = ifthenelse((TEMP <= scalar(0)), self.Snowpack + PREC, self.Snowpack)
-        print(float(mapmaximum(self.Snowpack)))
-        print(float(mapminimum(self.Snowpack)))
         self.map1 = ifthenelse(self.Snowpack > scalar(0), boolean(1), self.map1)
-        self.report(self.map1, os.getcwd()+self.pathsave+'map1') # !!!!!!!!!!!
+        #self.report(self.map1, os.getcwd()+self.pathsave+'map1') # !!!!!!!!!!!
         self.SolSnowpack = ifthenelse((TEMP <= scalar(0)), self.Snowpack - self.LiqSnowpackNext, self.SolSnowpack - a*TEMP)
         #начало TEPLO
-        self.Flow = ifthenelse((TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0)), self.Snowpack + PREC, scalar(0))
+        Flow = ifthenelse((TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0)), self.Snowpack + PREC, scalar(0))
         self.Snowpack = ifthenelse((TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.Snowpack)
         
-        map2 = (TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0))
-        map2 = map2 & (self.map1==boolean(1))
-        map2 = map2 & self.SpringMask # проверка на оттепель: если оттепель - не завершать расчет снегонакопления
+        #ghjdthrf
+        # проверка на оттепель: если оттепель - не завершать расчет снегонакопления
+        self.map2 = ifthenelse((TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0)),self.SpringMask,self.map2)
         # начало VODA
+        
         self.LiqSnowpack = ifthenelse((TEMP > scalar(0)) & (self.SolSnowpack > scalar(0)), self.LiqSnowpackNext + a*TEMP + PREC, self.LiqSnowpack)
         self.LiqSnowpackNext = ifthenelse ((TEMP > scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.LiqSnowpackNext)
         self.SnowCapacity = ifthenelse ((TEMP > scalar(0)) & (self.SolSnowpack > scalar(0)), b*self.SolSnowpack, scalar(0))
-        self.Snowpack = ifthenelse((TEMP > scalar(0)) & (self.LiqSnowpack > self.SnowCapacity), self.Snowpack + self.SnowCapacity, self.Snowpack + PREC)
-        self.Snowpack = ifthenelse(self.start==boolean(1),self.Snowpack,scalar(0))
-        self.report(map2, os.getcwd()+self.pathsave+'map2') # !!!!!!!!!!!
-        self.Flow = ifthenelse((TEMP > scalar(0)) & (self.LiqSnowpack > self.SnowCapacity), self.LiqSnowpack - self.SnowCapacity, scalar(0))
+        self.Snowpack = ifthenelse((TEMP > scalar(0)) & (self.LiqSnowpack > self.SnowCapacity), self.Snowpack + self.SnowCapacity - self.LiqSnowpack, self.Snowpack + PREC)
+        #self.Snowpack = ifthenelse(self.start==boolean(1),self.Snowpack,scalar(0))
+        #self.report(map2, os.getcwd()+self.pathsave+'map2') # !!!!!!!!!!!
+        Flow = ifthenelse((TEMP > scalar(0)) & (self.LiqSnowpack > self.SnowCapacity), self.LiqSnowpack - self.SnowCapacity, scalar(0))
         self.LiqSnowpackNext = ifthenelse((TEMP > scalar(0)) & (self.LiqSnowpack > self.SnowCapacity), self.SnowCapacity, self.LiqSnowpack)
-        
-        
-        self.mask = ifthenelse(map2,boolean(1),self.mask) 
-        self.report(self.mask, os.getcwd()+self.pathsave+'mask') # !!!!!!!!!!!
+        self.mask = ~ self.map2
+        #self.report(self.mask, os.getcwd()+self.pathsave+'mask') # !!!!!!!!!!!
         # сохранение результатов
-        
-        Snow=ifthen(self.mask & self.start,self.Snowpack)
-        Flowr=ifthen(self.mask & self.start,self.Flow)
+        self.Snowpack = ifthenelse(self.mask & self.start,self.Snowpack,scalar(0))
+        self.SolSnowpack = ifthenelse(self.mask & self.start,self.SolSnowpack,scalar(0))
+        self.LiqSnowpack = ifthenelse(self.mask & self.start,self.LiqSnowpack,scalar(0))
+        #Flow=ifthenelse(self.mask & self.start,Flow, scalar(0))
         # репортить tss по снегу, водоотдаче, стоку
-        self.SnowPackTime.sample(Snow)
-        self.FlowTime.sample(Flowr)
+        self.SnowPackTime.sample(self.Snowpack)
+        self.FlowTime.sample(Flow)
+        self.SolSnowpackTime.sample(self.SolSnowpack)
+        self.FrostTime.sample(SnowFrost)
+        self.LiqTime.sample(self.LiqSnowpack)
+        self.report(self.mask,os.getcwd()+self.pathsave+'mask')
+        self.report(self.map2,os.getcwd()+self.pathsave+'map2')
+        self.report(self.map1,os.getcwd()+self.pathsave+'map1')
+        self.report(self.SpringMask,os.getcwd()+self.pathsave+'spng')
         #self.report(Snow, os.getcwd()+self.pathsave+'snow')
         #self.report(Flowr, os.getcwd()+self.pathsave+'flow')
-        
+
+if __name__ == "__main__":
+    pass      
