@@ -1,0 +1,529 @@
+Driver: netCDF/Network Common Data Format
+Files: /home/hydronik/Документы/PROJECTS/SNEG2/data/pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc
+Size is 51, 35
+Origin = (19.500000000000000,75.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  lat#axis=Y
+  lat#long_name=latitude
+  lat#standard_name=latitude
+  lat#units=degrees_north
+  lon#axis=X
+  lon#long_name=longitude
+  lon#standard_name=longitude
+  lon#units=degrees_east
+  NC_GLOBAL#branch_time=109207
+  NC_GLOBAL#CDI=Climate Data Interface version 1.6.4 (http://code.zmaw.de/projects/cdi)
+  NC_GLOBAL#CDO=Climate Data Operators version 1.6.4 (http://code.zmaw.de/projects/cdo)
+  NC_GLOBAL#cmor_version=2.8.0
+  NC_GLOBAL#contact=The ACCESS wiki: http://wiki.csiro.au/confluence/display/ACCESS/Home. Contact Tony.Hirst@csiro.au regarding the ACCESS coupled climate model. Contact Peter.Uhe@csiro.au regarding ACCESS coupled climate model CMIP5 datasets.
+  NC_GLOBAL#Conventions=CF-1.4
+  NC_GLOBAL#creation_date=2012-01-15T10:45:49Z
+  NC_GLOBAL#experiment=historical
+  NC_GLOBAL#experiment_id=historical
+  NC_GLOBAL#forcing=GHG, Oz, SA, Sl, Vl, BC, OC, (GHG = CO2, N2O, CH4, CFC11, CFC12, CFC113, HCFC22, HFC125, HFC134a)
+  NC_GLOBAL#frequency=mon
+  NC_GLOBAL#history=Fri Dec 06 15:39:17 2019: Cdo yearsum pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulc.nc pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc
+Fri Dec 06 14:42:36 2019: Cdo mulc,86400 pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remap.nc pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulc.nc
+Fri Dec 06 14:24:54 2019: cdo sellonlatbox,20,70,40,75 pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90_r360x180_remap.nc pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remap.nc
+Fri Dec 06 14:15:04 2019: cdo selyear,1961/1990 pr_Amon_ACCESS1-0_rcp85_r1i1p1_190001-210012_r360x180_remap.nc pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90_r360x180_remap.nc
+Mon Nov 28 18:14:39 2016: cdo -f nc remapbil,r360x180 pr_Amon_ACCESS1-0_rcp85_r1i1p1_190001-210012.nc ../../../remap/pr/pr_Amon_ACCESS1-0_rcp85_r1i1p1_190001-210012_r360x180_remap.nc
+Mon Nov 28 18:11:29 2016: cdo cat pr_Amon_ACCESS1-0_historical_r1i1p1_190001-200512.nc ../../../rcp85/pr/ACCESS1-0/pr_Amon_ACCESS1-0_rcp85_r1i1p1_200601-210012.nc pr_Amon_ACCESS1-0_rcp85_r1i1p1_190001-210012.nc
+Mon Nov 28 17:25:57 2016: cdo seltimestep,601/1872 pr_Amon_ACCESS1-0_historical_r1i1p1_185001-200512.nc pr_Amon_ACCESS1-0_historical_r1i1p1_190001-200512.nc
+CMIP5 compliant file produced from raw ACCESS model output using the ACCESS Post-Processor and CMOR2. 2012-01-15T10:45:49Z CMOR rewrote data to comply with CF standards and CMIP5 requirements.
+  NC_GLOBAL#initialization_method=1
+  NC_GLOBAL#institute_id=CSIRO-BOM
+  NC_GLOBAL#institution=CSIRO (Commonwealth Scientific and Industrial Research Organisation, Australia), and BOM (Bureau of Meteorology, Australia)
+  NC_GLOBAL#modeling_realm=atmos
+  NC_GLOBAL#model_id=ACCESS1-0
+  NC_GLOBAL#parent_experiment=pre-industrial control
+  NC_GLOBAL#parent_experiment_id=piControl
+  NC_GLOBAL#parent_experiment_rip=r1i1p1
+  NC_GLOBAL#physics_version=1
+  NC_GLOBAL#product=output
+  NC_GLOBAL#project_id=CMIP5
+  NC_GLOBAL#realization=1
+  NC_GLOBAL#references=See http://wiki.csiro.au/confluence/display/ACCESS/ACCESS+Publications
+  NC_GLOBAL#source=ACCESS1-0 2011. Atmosphere: AGCM v1.0 (N96 grid-point, 1.875 degrees EW x approx 1.25 degree NS, 38 levels); ocean: NOAA/GFDL MOM4p1 (nominal 1.0 degree EW x 1.0 degrees NS, tripolar north of 65N, equatorial refinement to 1/3 degree from 10S to 10 N, cosine dependent NS south of 25S, 50 levels); sea ice: CICE4.1 (nominal 1.0 degree EW x 1.0 degrees NS, tripolar north of 65N, equatorial refinement to 1/3 degree from 10S to 10 N, cosine dependent NS south of 25S); land: MOSES2 (1.875 degree EW x 1.25 degree NS, 4 levels
+  NC_GLOBAL#table_id=Table Amon (27 April 2011) 9c851218e3842df9a62ef38b1e2575bb
+  NC_GLOBAL#title=ACCESS1-0 model output prepared for CMIP5 historical
+  NC_GLOBAL#tracking_id=df41be79-07e9-4303-811f-c9d2de555253
+  NC_GLOBAL#version_number=v20120115
+  NETCDF_DIM_EXTRA={time}
+  NETCDF_DIM_time_DEF={30,6}
+  NETCDF_DIM_time_VALUES={716224.5,716589.5,716954.5,717320.5,717685.5,718050.5,718415.5,718781.5,719146.5,719511.5,719876.5,720242.5,720607.5,720972.5,721337.5,721703.5,722068.5,722433.5,722798.5,723164.5,723529.5,723894.5,724259.5,724625.5,724990.5,725355.5,725720.5,726086.5,726451.5,726816.5}
+  pr#associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+  pr#cell_methods=time: mean
+  pr#comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+  pr#history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+  pr#long_name=Precipitation
+  pr#missing_value=1e+20
+  pr#standard_name=precipitation_flux
+  pr#units=kg m-2 s-1
+  pr#_FillValue=1e+20
+  time#bounds=time_bnds
+  time#calendar=proleptic_gregorian
+  time#long_name=time
+  time#standard_name=time
+  time#units=days since 1-01-01 00:00:00
+Subdatasets:
+  SUBDATASET_1_NAME=NETCDF:"/home/hydronik/Документы/PROJECTS/SNEG2/data/pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc":time_bnds
+  SUBDATASET_1_DESC=[30x2] time_bnds (64-bit floating-point)
+  SUBDATASET_2_NAME=NETCDF:"/home/hydronik/Документы/PROJECTS/SNEG2/data/pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc":pr
+  SUBDATASET_2_DESC=[30x35x51] precipitation_flux (32-bit floating-point)
+Corner Coordinates:
+Upper Left  (  19.5000000,  75.0000000) 
+Lower Left  (  19.5000000,  40.0000000) 
+Upper Right (  70.5000000,  75.0000000) 
+Lower Right (  70.5000000,  40.0000000) 
+Center      (  45.0000000,  57.5000000) 
+Band 1 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=716224.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 2 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=716589.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 3 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=716954.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 4 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=717320.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 5 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=717685.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 6 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=718050.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 7 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=718415.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 8 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=718781.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 9 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=719146.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 10 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=719511.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 11 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=719876.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 12 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=720242.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 13 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=720607.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 14 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=720972.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 15 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=721337.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 16 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=721703.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 17 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=722068.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 18 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=722433.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 19 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=722798.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 20 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=723164.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 21 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=723529.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 22 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=723894.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 23 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=724259.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 24 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=724625.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 25 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=724990.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 26 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=725355.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 27 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=725720.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 28 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=726086.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 29 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=726451.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
+Band 30 Block=51x1 Type=Float32, ColorInterp=Undefined
+  NoData Value=1.00000002004087734e+20
+  Unit Type: kg m-2 s-1
+  Metadata:
+    associated_files=baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_ACCESS1-0_historical_r0i0p0.nc areacella: areacella_fx_ACCESS1-0_historical_r0i0p0.nc
+    cell_methods=time: mean
+    comment=at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+    history=2012-01-15T10:45:49Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).
+    long_name=Precipitation
+    missing_value=1e+20
+    NETCDF_DIM_time=726816.5
+    NETCDF_VARNAME=pr
+    standard_name=precipitation_flux
+    units=kg m-2 s-1
+    _FillValue=1e+20
