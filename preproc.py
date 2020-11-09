@@ -56,13 +56,17 @@ def createclone(src,path):
     source=gdal.Open(src,gdalconst.GA_ReadOnly)
     optt=gdal.TranslateOptions(format='PCRaster',bandList=[1],outputType=gdalconst.GDT_Float32,metadataOptions='VS_SCALAR')
     gdal.Translate(path+'clone.map',source,options=optt)
+def createforest(src,path):
+    source=gdal.Open(src,gdalconst.GA_ReadOnly)
+    optt=gdal.TranslateOptions(format='PCRaster',bandList=[1],outputType=gdalconst.GDT_Byte,metadataOptions='VS_BOOLEAN')
+    gdal.Translate(path+'forest.map',source,options=optt)
 
 #preproc for txt input files
 #generates tss files
-def tsswriter(stationfiles,ppath,date1,date2):
+def tsswriter(stationfiles,ppath,date1,date2,yr):
     indices=[]
-    prectss=open(ppath+'prec.tss','w')
-    temptss=open(ppath+'temp.tss','w')
+    prectss=open(ppath+'tssdata/'+str(yr)+'_prec.tss','w')
+    temptss=open(ppath+'tssdata/'+str(yr)+'_temp.tss','w')
     temp=[]
     prec=[]
     for f in glob.glob(stationfiles):
@@ -144,10 +148,15 @@ def stationgen(indices):
     #erronic=[8,29,33,36,44,47,50,55,66, 69,85,91,96,99,107,109,113]
     #table=table[(table['x_lon'].values > 22) & (table['x_lon'].values < 68)]
     #table=table[(table['y_lat'].values > 39) & (table['y_lat']< 72)]
-    table['id2']=table.index+1
+    #table['id2']=table.index+1
     #table=table[~table['id2'].isin(erronic)]
+    table['id']=table.index
     table=table[table['index'].isin(indices)]
     table=table.drop_duplicates(subset='index',keep='first', inplace=False, ignore_index=False)
+    table.set_index('index',inplace=True)
+    table.reindex(indices)
+    table['index']=table.index
+    table.set_index('id',inplace=True)
     table.reset_index(drop=True,inplace=True)
     table['id']=table.index+1
     table1=table[['x_lon','y_lat','id']]

@@ -12,16 +12,17 @@ def preprocessing():
     regridcdo(path+precf,ppath+'regridded_prec.nc',ppath+maskf,0)
     regridcdo(path+tempf,ppath+'regridded_temp.nc',ppath+maskf,1)
     #create clonemap file
-    
     createclone(ppath+'regridded_temp.nc',ppath)
-def writetss(year1,year2):
+    
+def writetss(yr):
     #create tss
     ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
     stationfiles=ppath+'stationdata/*.txt'
-    date1=dt.datetime(year1,7,1)#дата с которой надо начинать запись данных
-    date2=dt.datetime(year2,7,15)
-    indices=tsswriter(stationfiles,ppath,date1,date2)
-    stationgen(indices)
+    date1=dt.datetime(yr,7,1)#дата с которой надо начинать запись данных
+    date2=dt.datetime(yr+1,7,15)
+    indices=tsswriter(stationfiles,ppath,date1,date2,yr)
+    return indices
+
 
 
 def main(preprocflag=1,stationflag=1,mapsflag=1):
@@ -42,7 +43,10 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
     if preprocflag==1:
         preprocessing()
     if stationflag==1:
-        writetss(year1,year2)
+        for yr in range(year1,year2+1,1):
+            indices=writetss(yr)
+        stationgen(indices)
+
     for yr in range(year1,year2+1,1):
 
         data1=dt.datetime(yr,7,1) #даты 1 2 надо вынести во входящие данные
@@ -64,4 +68,6 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
 
 if __name__ == '__main__':
     #writetss(1981,1982)
-    main(preprocflag=0,stationflag=0,mapsflag=0)
+    #ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+    #createforest(ppath+'forest.tif',ppath)
+    main(preprocflag=0,stationflag=1,mapsflag=0)
