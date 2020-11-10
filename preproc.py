@@ -61,6 +61,9 @@ def createforest(src,path):
     optt=gdal.TranslateOptions(format='PCRaster',bandList=[1],outputType=gdalconst.GDT_Byte,metadataOptions='VS_BOOLEAN')
     gdal.Translate(path+'forest.map',source,options=optt)
 
+#создание карты леса через командную строку
+#resample /home/hydronik/Документы/PROJECTS/SNEG2/data/forest.map /home/hydronik/Документы/PROJECTS/SNEG2/data/les_pole.map --clone /home/hydronik/Документы/PROJECTS/SNEG2/data/clone.map
+
 #preproc for txt input files
 #generates tss files
 def tsswriter(stationfiles,ppath,date1,date2,yr):
