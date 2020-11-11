@@ -12,7 +12,7 @@ def readtss(path,yr):
         number = int(f.readlines()[1])
         #linn = f.readlines()[110].split()
         colnumbers = [str(i) for i in range(1,number)]
-        print(['timestep']+colnumbers)
+        #print(['timestep']+colnumbers)
         #print(len(linn))
     if calendar.isleap(int(yr)+1)==True:
         per=366
@@ -31,11 +31,11 @@ def readtss(path,yr):
     # ищем средние, даты, макс
     return df
 
-def plotter(stationname):
-    yr='1981'
+def plotter(stationname,yr):
+    
     stationname=str(stationname)
-    first = '1981-09-01'
-    end='1982-06-25'
+    first = yr+'-07-01'
+    end=str(int(yr)+1)+'-06-25'
     os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data')
     pathsnow = os.getcwd() + '/result_'+yr+'/'+yr+'snow.tss'
     #pathtsnow = os.getcwd() + '/result_'+yr+'/'+yr+'tsnow.tss'
@@ -57,26 +57,31 @@ def plotter(stationname):
     fig,ax = plt.subplots()
     #ax.plot(tsnowdf.index,tsnowdf[stationname],label='tsnow')
     ax.plot(snowdf.index,snowdf[stationname],label='snow')
-    ax.plot(liqndf.index,precdf[stationname],label='prec')
+    ax.plot(liqsdf.index,liqsdf[stationname],label='liqs')
     plt.xticks(rotation='vertical')
     plt.grid(True)
     plt.legend()
+    fig.savefig(os.getcwd() + '/result_'+yr+'/'+stationname+'_plot.jpeg',format='jpeg',dpi=100)
+    plt.close()
     #ax2 = ax.twinx()
     #ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
     #ax2.bar(precdf.index,precdf[stationname],label='prec')
     #ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
-    dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[stationname],'prec':precdf[stationname],'snow':snowdf[stationname],'sols':solsdf[stationname],'liqs':liqsdf[stationname],'liqn':liqndf[stationname]})
+    dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[stationname],'prec':precdf[stationname],'snow':snowdf[stationname],'sols':solsdf[stationname],'liqs':liqsdf[stationname],'liqn':liqndf[stationname],'flow':flowdf[stationname]})
     dfout.to_csv(os.getcwd() + '/result_'+yr+'/'+stationname+'_out.csv')
     #plt.legend()
-    plt.show()
-    #fig.savefig(os.getcwd() + '/result_'+yr+'/'+stationname+'_plot.jpeg',format='jpeg',dpi=100)
+    #plt.show()
+    print('.', end=' ')
     return None
 
-def main():
+def main(yr):
     for station in range(1,67):
     #for station in range(5,7):
-        plotter(station)
+        plotter(station,yr)
+        
+    print('Завершено!')
 
 if __name__ == '__main__':
-    
-    main()
+    print('Какой год?')
+    yr=input()
+    main(yr)
