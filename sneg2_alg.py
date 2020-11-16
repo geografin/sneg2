@@ -85,22 +85,24 @@ class Snow2Model(DynamicModel):
         #self.TSnowPackTime.sample(self.Snowpack)
         self.map1 = ifthenelse(self.Snowpack > scalar(0), boolean(1), self.map1)
         #self.report(self.map1, os.getcwd()+self.pathsave+'map1') # !!!!!!!!!!!
-        self.SolSnowpack = ifthenelse((TEMP < scalar(0)), self.Snowpack - self.LiqSnowpackNext, self.SolSnowpack - a*TEMP)
-        self.SolSnowpack = ifthenelse((self.SolSnowpack < scalar(0)),scalar(0),self.SolSnowpack) #ТУПОЕ ОБНУЛЕНИЕ
+        Melt = a*TEMP
+        Melt = ifthenelse((Melt > self.SolSnowpack),self.SolSnowpack,Melt)
+        self.SolSnowpack = ifthenelse((TEMP < scalar(0)), self.Snowpack - self.LiqSnowpackNext, self.SolSnowpack - Melt)
+        #self.SolSnowpack = ifthenelse((self.SolSnowpack < scalar(0)),scalar(0),self.SolSnowpack) #ТУПОЕ ОБНУЛЕНИЕ
         #начало TEPLO
-        Flow = ifthenelse((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), self.Snowpack + PREC, scalar(0))
+        #Flow = ifthenelse((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), self.Snowpack + PREC, scalar(0)) - удалили условие
         self.Snowpack = ifthenelse((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.Snowpack)
-        self.LiqSnowpackNext = ifthenelse ((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.LiqSnowpackNext)
-        self.LiqSnowpack = ifthenelse ((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.LiqSnowpack)
+        #self.LiqSnowpackNext = ifthenelse ((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.LiqSnowpackNext)
+        #self.LiqSnowpack = ifthenelse ((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)), scalar(0), self.LiqSnowpack)
         # проверка на оттепель: если оттепель - не завершать расчет снегонакопления
         self.map2 = ifthenelse((TEMP >= scalar(0)) & (self.SolSnowpack <= scalar(0)),self.SpringMask,self.map2)
         # начало VODA
         
-        self.LiqSnowpack = ifthenelse((TEMP >= scalar(0)) & (self.SolSnowpack > scalar(0)), self.LiqSnowpackNext + a*TEMP + PREC, self.LiqSnowpack)
+        self.LiqSnowpack = ifthenelse((TEMP >= scalar(0)), self.LiqSnowpackNext + Melt + PREC, self.LiqSnowpack)
         
         SnowCapacity = b*self.SolSnowpack
-        self.Snowpack = ifthenelse((TEMP >= scalar(0)) & (self.LiqSnowpack > SnowCapacity), self.Snowpack + SnowCapacity - self.LiqSnowpack, self.Snowpack)
-        self.Snowpack = ifthenelse((TEMP >= scalar(0)) & (self.LiqSnowpack <= SnowCapacity), self.Snowpack + PREC, self.Snowpack)
+        self.Snowpack = ifthenelse((TEMP >= scalar(0)) & (self.LiqSnowpack > SnowCapacity), self.SolSnowpack + SnowCapacity, self.Snowpack)
+        self.Snowpack = ifthenelse((TEMP >= scalar(0)) & (self.LiqSnowpack <= SnowCapacity), self.SolSnowpack + self.LiqSnowpack, self.Snowpack)
         
         #self.Snowpack = ifthenelse(self.start==boolean(1),self.Snowpack,scalar(0))
         #self.report(map2, os.getcwd()+self.pathsave+'map2') # !!!!!!!!!!!

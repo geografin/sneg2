@@ -31,11 +31,11 @@ def readtss(path,yr):
     # ищем средние, даты, макс
     return df
 
-def plotter(stationname,yr):
-    
-    stationname=str(stationname)
-    first = yr+'-07-01'
-    end=str(int(yr)+1)+'-06-25'
+def plotter(yr,stationrange):
+    printflag=0
+    first = str(yr)+'-07-01'
+    end=str(yr+1)+'-06-25'
+    yr=str(yr)
     os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data')
     pathsnow = os.getcwd() + '/result_'+yr+'/'+yr+'snow.tss'
     #pathtsnow = os.getcwd() + '/result_'+yr+'/'+yr+'tsnow.tss'
@@ -54,34 +54,66 @@ def plotter(stationname,yr):
     liqsdf = readtss(pathliqs,yr)[first:end]
     liqndf = readtss(pathliqn,yr)[first:end]
     #precdf = precdf.mul(10)
-    fig,ax = plt.subplots()
-    #ax.plot(tsnowdf.index,tsnowdf[stationname],label='tsnow')
-    ax.plot(snowdf.index,snowdf[stationname],label='snow')
-    ax.plot(liqsdf.index,liqsdf[stationname],label='liqs')
-    plt.xticks(rotation='vertical')
-    plt.grid(True)
-    plt.legend()
-    fig.savefig(os.getcwd() + '/result_'+yr+'/'+stationname+'_plot.jpeg',format='jpeg',dpi=100)
-    plt.close()
-    #ax2 = ax.twinx()
-    #ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
-    #ax2.bar(precdf.index,precdf[stationname],label='prec')
-    #ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
-    dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[stationname],'prec':precdf[stationname],'snow':snowdf[stationname],'sols':solsdf[stationname],'liqs':liqsdf[stationname],'liqn':liqndf[stationname],'flow':flowdf[stationname]})
-    dfout.to_csv(os.getcwd() + '/result_'+yr+'/'+stationname+'_out.csv')
-    #plt.legend()
-    #plt.show()
-    print('.', end=' ')
-    return None
+    
+    snowdf2=snowdf.drop('timestep',axis='columns')
+    maxsnow = snowdf2.max(axis=0)
+    
+    maxsnowdate = snowdf2.idxmax()
+    
+    datesnow = snowdf2.loc[str(int(yr)+1)+'-02-28']
+    changedate=maxsnowdate.copy()
+    changedate.loc[(changedate<str(int(yr)+1)+'-01-01')]=str(int(yr)+1)+'-03-01'
+    changedate=pd.to_datetime(changedate)
+    endsnowdate = snowdf2.loc[min(changedate.values):].idxmin()
 
-def main(yr):
-    for station in range(1,67):
-    #for station in range(5,7):
-        plotter(station,yr)
-        
-    print('Завершено!')
+    if printflag==1:
+        for station in stationrange:
+            station=str(station)
+            fig,ax = plt.subplots()
+            #ax.plot(tsnowdf.index,tsnowdf[stationname],label='tsnow')
+            ax.plot(snowdf.index,snowdf[station],label='snow')
+            ax.plot(liqsdf.index,liqsdf[station],label='liqs')
+            plt.xticks(rotation='vertical')
+            plt.grid(True)
+            plt.legend()
+            fig.savefig(os.getcwd() + '/result_'+yr+'/'+station+'_plot.jpeg',format='jpeg',dpi=100)
+            plt.close()
+            #ax2 = ax.twinx()
+            #ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
+            #ax2.bar(precdf.index,precdf[stationname],label='prec')
+            #ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
+            dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[station],'prec':precdf[station],'snow':snowdf[station],'sols':solsdf[station],'liqs':liqsdf[station],'liqn':liqndf[station],'flow':flowdf[station]})
+            dfout.to_csv(os.getcwd() + '/result_'+yr+'/'+station+'_out.csv')
+            #plt.legend()
+            #plt.show()
+            #print('.', end=' ')
+
+    return maxsnow, maxsnowdate, datesnow, endsnowdate
+
+def main(yr1yr2,stationrange):
+    Smax = pd.DataFrame(columns=['Stations']+[str(col) for col in yr1yr2])
+    Smax['Stations']=stationrange
+    S28Feb = Smax.copy()
+    DateSmax = Smax.copy()
+    DateS0 = Smax.copy()
+
+    for yr in yr1yr2:
+        maxsnow, maxsnowdate, datesnow, endsnowdate = plotter(yr,stationrange)
+        Smax[str(yr)]=maxsnow.values
+        S28Feb[str(yr)]=datesnow.values
+        DateSmax[str(yr)]=maxsnowdate.values
+        DateS0[str(yr)]=endsnowdate.values
+        print('Завершён год '+str(yr))
+
+    
+    for var in ['Smax','S28Feb','DateSmax','DateS0']:
+        locals()[var].to_csv(os.getcwd() + '/summaries/'+var+'_summary.csv')
 
 if __name__ == '__main__':
-    print('Какой год?')
-    yr=input()
-    main(yr)
+    print('Год начала?')
+    yr1=input()
+    print('Год конца?')
+    yr2=input()
+    yr1yr2=range(int(yr1),int(yr2)+1)
+    stationrange = range(1,67)
+    main(yr1yr2, stationrange)
