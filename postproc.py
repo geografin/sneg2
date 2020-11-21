@@ -90,9 +90,9 @@ def plotter(yr,stationrange):
 
     return maxsnow, maxsnowdate, datesnow, endsnowdate
 
-def main(yr1yr2,stationrange):
+def main(yr1yr2,stationrange,indices):
     Smax = pd.DataFrame(columns=['Stations']+[str(col) for col in yr1yr2])
-    Smax['Stations']=stationrange
+    Smax['Stations']=indices
     S28Feb = Smax.copy()
     DateSmax = Smax.copy()
     DateS0 = Smax.copy()
@@ -115,5 +115,8 @@ if __name__ == '__main__':
     print('Год конца?')
     yr2=input()
     yr1yr2=range(int(yr1),int(yr2)+1)
-    stationrange = range(1,67)
-    main(yr1yr2, stationrange)
+    table=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/stations_leg.txt', 
+                    delimiter='\t', decimal='.',engine='python')
+    stationrange = table['id'].values
+    indices = table['index'].values
+    main(yr1yr2, stationrange,indices)

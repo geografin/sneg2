@@ -70,4 +70,4 @@ if __name__ == '__main__':
     #writetss(1981,1982)
     #ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
     #createforest(ppath+'forest.tif',ppath)
-    main(preprocflag=0,stationflag=1,mapsflag=0)
+    main(preprocflag=0,stationflag=0,mapsflag=0)

@@ -74,7 +74,8 @@ def tsswriter(stationfiles,ppath,date1,date2,yr):
     prec=[]
     for f in glob.glob(stationfiles):
         stationindex=f[-9:-4]
-        print(stationindex)
+        print('-------начало станции',stationindex)
+        #print(stationindex)
         if stationindex in indices:
             continue
         elif stationindex=='23412':
@@ -110,6 +111,9 @@ def tsswriter(stationfiles,ppath,date1,date2,yr):
                     tempp.append(float(line.split()[4]))
                     precc.append(float(line.split()[5]))
             daterev=date
+        print('Legths of arrays---------------')
+        print(np.shape(tempp))
+        print(np.shape(precc))
         temp.append(tempp)
         prec.append(precc)
         inputdata.close()
@@ -130,17 +134,18 @@ def tsswriter(stationfiles,ppath,date1,date2,yr):
             fl.write(str(num)+'\n') #пишем список станций по индексам
             num += 1
         timestr=list(range(1,len(param[0])+1))
-        print(type(timestr[2]))
+        print(np.shape(param))
+        #print(type(timestr[2]))
         #mt=['%1.2f'for x in range()]
         fmt=(['%d']+['%1.2f']*len(param))
-        print(len(param))
+        print('Есть для ', len(param),' станций')
         print(fmt)
         z=[timestr]+param
         print(type(z[0][0]),type(z[1][0]),type(z[2][0]))
         np.savetxt(fl,np.transpose(z),fmt=fmt) #сохраняем массивы как таблицу: transpose чтобы не по строкам а по столбцам
     temptss.close()
     prectss.close()
-    print(indices)
+    #print(indices)
     return indices
 
 def stationgen(indices):
@@ -157,7 +162,9 @@ def stationgen(indices):
     table=table[table['index'].isin(indices)]
     table=table.drop_duplicates(subset='index',keep='first', inplace=False, ignore_index=False)
     table.set_index('index',inplace=True)
-    table.reindex(indices)
+    #table['index1']=indices
+    #table['id1']=range(1,len(indices)+1)
+    table=table.reindex(indices)
     table['index']=table.index
     table.set_index('id',inplace=True)
     table.reset_index(drop=True,inplace=True)
