@@ -10,10 +10,10 @@ class Snow2Model(DynamicModel):
     def __init__(self,clonemap,currentyear,pathsave):
         DynamicModel.__init__(self)
         setclone(clonemap)
-        self.pathsave=pathsave
-        self.tpath='/rez/tas_map/'
-        self.prpath='/rez/pr_map/'
+        os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+pathsave)
         self.ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+        self.tpath=os.getcwd()+'/mapps/tas_map/'
+        self.prpath=os.getcwd()+'/mapps/pr_map/'
         self.ttimepath=self.ppath+'tssdata/'+str(currentyear)+'_temp.tss'
         self.ptimepath=self.ppath+'tssdata/'+str(currentyear)+'_prec.tss'
         self.currentyear=currentyear
@@ -32,27 +32,27 @@ class Snow2Model(DynamicModel):
         self.OttTemp=scalar(0)
         self.SpringMask=boolean(0)
         self.stationmap=readmap(self.ppath+'stations.map')
-        self.SnowPackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'snow',self,self.stationmap,noHeader=False)
-        #self.TSnowPackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'tsnow',self,self.stationmap,noHeader=False)
-        self.FlowTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'flow',self,self.stationmap,noHeader=False)
-        self.TempTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'temp',self,self.stationmap,noHeader=False)
-        self.SolSnowpackTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'sols',self,self.stationmap,noHeader=False)
-        self.PrecTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'prec',self,self.stationmap,noHeader=False)
-        self.LiqTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'liqs',self,self.stationmap,noHeader=False)
-        self.FrostTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'frost',self,self.stationmap,noHeader=False)
-        self.LiqNextTime=TimeoutputTimeseries(self.pathsave[1:]+str(self.currentyear)+'liqn',self,self.stationmap,noHeader=False)
+        self.SnowPackTime=TimeoutputTimeseries(str(self.currentyear)+'snow',self,self.stationmap,noHeader=False)
+        #self.TSnowPackTime=TimeoutputTimeseries(str(self.currentyear)+'tsnow',self,self.stationmap,noHeader=False)
+        self.FlowTime=TimeoutputTimeseries(str(self.currentyear)+'flow',self,self.stationmap,noHeader=False)
+        self.TempTime=TimeoutputTimeseries(str(self.currentyear)+'temp',self,self.stationmap,noHeader=False)
+        self.SolSnowpackTime=TimeoutputTimeseries(str(self.currentyear)+'sols',self,self.stationmap,noHeader=False)
+        self.PrecTime=TimeoutputTimeseries(str(self.currentyear)+'prec',self,self.stationmap,noHeader=False)
+        self.LiqTime=TimeoutputTimeseries(str(self.currentyear)+'liqs',self,self.stationmap,noHeader=False)
+        self.FrostTime=TimeoutputTimeseries(str(self.currentyear)+'frost',self,self.stationmap,noHeader=False)
+        self.LiqNextTime=TimeoutputTimeseries(str(self.currentyear)+'liqn',self,self.stationmap,noHeader=False)
         self.a=ifthenelse(self.forestmap,scalar(1.8),scalar(4.5)) # Зависит от леса и поля и от оттепель-весна
         self.b=scalar(0.13/(1-0.13))
         self.c=scalar(20)
     def dynamic(self):
-        #self.TEMP = self.readmap(os.getcwd()+self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
-        TEMP = timeinputscalar(self.ttimepath,self.stationmap)
+        TEMP = self.readmap(self.tpath+'temp') # Чтение стэка файлов температуры формата temp0000.001
+        #TEMP = timeinputscalar(self.ttimepath,self.stationmap)   # Чтение файла по станциям - для тестирования
         #mintemp=mapminimum(TEMP)
         #print(float(mapminimum(self.TEMP)))
         self.start=ifthenelse(TEMP < scalar(0),boolean(1),self.start)
         
-        #self.PREC = self.readmap(os.getcwd()+self.prpath+'prec')
-        PREC = timeinputscalar(self.ptimepath,self.stationmap)
+        PREC = self.readmap(self.prpath+'prec') # Чтение стэка файлов осадков формата prec0000.001
+        #PREC = timeinputscalar(self.ptimepath,self.stationmap) # Чтение файла по станциям - для тестирования
         # начало HOLOD   
         self.TempTime.sample(TEMP)
         self.PrecTime.sample(PREC)

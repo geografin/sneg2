@@ -9,12 +9,14 @@ import datetime as dt
 import numpy as np
 import glob
 import calendar
+import os, shutil
 
 def regridcdo(infile,outfile,maskfile,temp):
     cdo=Cdo()
     if temp==1:
         temptemp=cdo.subc(273,input=infile)
         infile=temptemp
+        #infile=infile
     else:
         temptemp=cdo.mulc(86400,input=infile)
         infile=temptemp
@@ -24,13 +26,18 @@ def regridcdo(infile,outfile,maskfile,temp):
 #main preproc for model files nc
 #gettin index from file
 def gettintime(file):
-    startingday=dt.datetime(1,1,1)
+    startingday=dt.datetime(1850,1,1)
     metadata=file.GetMetadata()['NETCDF_DIM_time_VALUES']
+    
     metarray=metadata.strip('}{').split(',')
+   
     metarray=[float(item)for item in metarray]
     deltas=list(map(lambda x: dt.timedelta(days=x),metarray))
     datas=list(map(lambda x: startingday+x,deltas))
+    print(datas[0],datas[-1])
     return datas
+
+
 def getindex(data,array):
     datacorr=data+dt.timedelta(hours=12)
     ind=array.index(datacorr)+1
@@ -40,10 +47,15 @@ def createmaps(src,param,data1,data2,mappath):
     source=gdal.Open(src,gdalconst.GA_ReadOnly)
     index1=getindex(data1,gettintime(source))
     index2=getindex(data2,gettintime(source))
+    folders=['/tas_map','/pr_map']
+    for folder in folders:
+        if not os.path.exists(mappath+folder):
+            os.mkdir(mappath+folder)
+        
     if param=='temp':
-        mapprpath='tas_map/'+param+'0000'
+        mapprpath='/tas_map/'+param+'0000'
     else:
-        mapprpath='pr_map/'+param+'0000'
+        mapprpath='/pr_map/'+param+'0000'
     for index in range(index1[0],index2[0]):
         dataf=index1[1]+dt.timedelta(index-index1[0])
         dataf=dt.datetime.strftime(dataf,'%Y_%m_%d')

@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import calendar
 import os
+from model_run import *
 
 def readtss(path,yr):
     
@@ -32,19 +33,20 @@ def readtss(path,yr):
     return df
 
 def plotter(yr,stationrange):
+    
     printflag=0
     first = str(yr)+'-07-01'
     end=str(yr+1)+'-06-25'
     yr=str(yr)
-    os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data')
-    pathsnow = os.getcwd() + '/result_'+yr+'/'+yr+'snow.tss'
-    #pathtsnow = os.getcwd() + '/result_'+yr+'/'+yr+'tsnow.tss'
-    pathflow = os.getcwd() + '/result_'+yr+'/'+yr+'flow.tss'
-    pathtemp = os.getcwd() + '/result_'+yr+'/'+yr+'temp.tss'
-    pathprec = os.getcwd() + '/result_'+yr+'/'+yr+'prec.tss'
-    pathsols = os.getcwd() + '/result_'+yr+'/'+yr+'sols.tss'
-    pathliqs = os.getcwd() + '/result_'+yr+'/'+yr+'liqs.tss'
-    pathliqn = os.getcwd() + '/result_'+yr+'/'+yr+'liqn.tss'
+    
+    pathsnow = os.getcwd()+'/'+yr+'snow.tss'
+    #pathtsnow = os.getcwd() + '/'+yr+'tsnow.tss'
+    pathflow = os.getcwd() +'/'+yr+'flow.tss'
+    pathtemp = os.getcwd() + '/'+yr+'temp.tss'
+    pathprec = os.getcwd() + '/'+yr+'prec.tss'
+    pathsols = os.getcwd() + '/'+yr+'sols.tss'
+    pathliqs = os.getcwd() + '/'+yr+'liqs.tss'
+    pathliqn = os.getcwd() + '/'+yr+'liqn.tss'
     snowdf = readtss(pathsnow,yr)[first:end]
     #tsnowdf = readtss(pathtsnow,yr)[first:end]
     flowdf = readtss(pathflow,yr)[first:end]
@@ -62,9 +64,11 @@ def plotter(yr,stationrange):
     
     datesnow = snowdf2.loc[str(int(yr)+1)+'-02-28']
     changedate=maxsnowdate.copy()
-    changedate.loc[(changedate<str(int(yr)+1)+'-01-01')]=str(int(yr)+1)+'-03-01'
+    
+    changedate.loc[(changedate<str(int(yr)+1)+'-01-01')]=str(int(yr)+1)+'-03-01' #делаем 1 марта там где дата максимума снега ранее января
     changedate=pd.to_datetime(changedate)
-    endsnowdate = snowdf2.loc[min(changedate.values):].idxmin()
+    
+    endsnowdate = snowdf2.loc[changedate.min():].idxmin() #индекс первого случая минимума для усеченной таблицы по минимальной дате максимального снегозапаса
 
     if printflag==1:
         for station in stationrange:
@@ -76,14 +80,14 @@ def plotter(yr,stationrange):
             plt.xticks(rotation='vertical')
             plt.grid(True)
             plt.legend()
-            fig.savefig(os.getcwd() + '/result_'+yr+'/'+station+'_plot.jpeg',format='jpeg',dpi=100)
+            fig.savefig(os.getcwd() +yr+'_'+station+'_plot.jpeg',format='jpeg',dpi=100)
             plt.close()
             #ax2 = ax.twinx()
             #ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
             #ax2.bar(precdf.index,precdf[stationname],label='prec')
             #ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
             dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[station],'prec':precdf[station],'snow':snowdf[station],'sols':solsdf[station],'liqs':liqsdf[station],'liqn':liqndf[station],'flow':flowdf[station]})
-            dfout.to_csv(os.getcwd() + '/result_'+yr+'/'+station+'_out.csv')
+            dfout.to_csv(os.getcwd() +'/' +yr+'_'+station+'_out.csv')
             #plt.legend()
             #plt.show()
             #print('.', end=' ')
@@ -91,6 +95,10 @@ def plotter(yr,stationrange):
     return maxsnow, maxsnowdate, datesnow, endsnowdate
 
 def main(yr1yr2,stationrange,indices):
+    inputfiles, model,scenario,period = ensembler()
+    os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model)
+    if not os.path.exists(os.getcwd()+'/summaries'):
+        os.mkdir(os.getcwd()+'/summaries')
     Smax = pd.DataFrame(columns=['Stations']+[str(col) for col in yr1yr2])
     Smax['Stations']=indices
     S28Feb = Smax.copy()
