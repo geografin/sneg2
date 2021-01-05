@@ -77,7 +77,12 @@ def plotter(yr,stationrange,forestvals):
     # Search of maximums
         
     secondmax=[]
-    
+    alphas = [1.8 if i==1 else 4.5 for i in forestvals]
+    alphac = 1/(0.3*0.3)
+    delta = 1.05
+    hcdfsum=[]
+    precsumdf=[]
+    shoddays=[]
     for col,data in tempdf2.iteritems():
         # создаем для данной станции таблицу из температур и снега
         sdf=pd.concat([data,snowdf2[col]],axis=1,keys=['tempr','snowr'])
@@ -109,26 +114,31 @@ def plotter(yr,stationrange,forestvals):
         except:
             secondmax.append({yr+'maxdate1':np.nan,yr+'max1':np.nan,yr+'flow1':np.nan,yr+'maxdate2':np.nan,yr+'max2':np.nan,yr+'flow2':np.nan})
         
-    # SHOD procedure
-    alphas = [1.8 if i==1 else 4.5 for i in forestvals]
-    alphac = 1/(0.3*0.3)
-    print(alphas)
-    delta = 1.05
-    tempgtzero=tempdf2[maxsnowdate.loc[col]:endsnowdate.loc[col]]
-    tempgtzero[tempgtzero < 0] = 0
-    hcdf = tempgtzero.mul(alphas,axis=1)
+        precsumdf.append(precdf2[maxsnowdate.loc[col]:endsnowdate.loc[col]][col].sum(axis=0))
+        # SHOD procedure
+        
+        #print(alphas)
+        alpha = alphas[int(col)-1]
+        tempgtzero=data[maxsnowdate.loc[col]:endsnowdate.loc[col]]
+        shoddays.append(len(tempgtzero))
+        tempgtzero.loc[tempgtzero.values < 0] = 0
+        hcdf = tempgtzero*alpha
+        hcdfsum.append(hcdf.sum(axis=0))
+        
+        #print('Распечатка')
+        #print(KC)
     
-    KC = hcdf.sum(axis=0)/maxsnow
-    print('Распечатка')
-    print(KC)
+    KC = hcdfsum/maxsnow.values
     KCS = KC/delta
-    fc = gamma.sf(KCS,alphac,loc=0,scale=1/alphac)
-    hp = fc*hcdf.sum(axis=0)
-    precsumdf = precdf2[maxsnowdate.loc[col]:endsnowdate.loc[col]].sum(axis=0)
     
-    corrflow = hp + precsumdf - 0.3
-
-
+    fc = np.array(list(map(lambda x:gamma.sf(x,alphac,loc=0,scale=1/alphac),KCS)))
+    
+    hp = fc*hcdfsum
+    evap=[0.3]*len(indices)
+    
+    corrflow = [x+y-z for x,y,z in zip(hp,precsumdf,evap)]
+    
+    
 
 
 
@@ -156,7 +166,7 @@ def plotter(yr,stationrange,forestvals):
             #plt.show()
             #print('.', end=' ')
 
-    return maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp
+    return maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf, shoddays
 
 
 '''
@@ -179,39 +189,44 @@ forestvals = table2['rvalue_1'].values
 inputfiles, model,scenario,period = ensembler()
 os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model)
 
-maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp = plotter(2043,['23','32'],forestvals)
+maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf, shoddays = plotter(2043,['23','32'],forestvals)
 
 '''
 
 
 
-def main(yr1yr2,stationrange,indices,forestvals):
+def main(yr1yr2,stationrange,indices,forestvals,x_coords,y_coords):
     inputfiles, model,scenario,period = ensembler()
     os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model)
     if not os.path.exists(os.getcwd()+'/summaries'):
         os.mkdir(os.getcwd()+'/summaries')
-    Smax = pd.DataFrame(columns=['Stations']+[str(col) for col in yr1yr2])
-    Smax['Stations']=indices
+    Smax = pd.DataFrame(columns=['XCOORD','YCOORD']+[str(col) for col in yr1yr2])
+    Smax['XCOORD']=x_coords
+    Smax['YCOORD']=y_coords
     S28Feb = Smax.copy()
     DateSmax = Smax.copy()
     DateS0 = Smax.copy()
     SecondMx = Smax.copy()
     
-    Shod = pd.DataFrame({'Stations':indices,'IsForest':forestvals})
-    Shodhp = pd.DataFrame({'Stations':indices,'IsForest':forestvals})
+    Shod = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
+    Shodhp = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
+    Shodprec = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
+    Shoddays = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
     for yr in yr1yr2:
-        maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp = plotter(yr,stationrange,forestvals)
+        maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf, shoddays = plotter(yr,stationrange,forestvals)
         Smax[str(yr)]=maxsnow.values
         S28Feb[str(yr)]=datesnow.values
         DateSmax[str(yr)]=maxsnowdate.values
         DateS0[str(yr)]=endsnowdate.values
-        Shod[str(yr)]=corrflow.values
-        Shodhp[str(yr)]=hp.values
+        Shod[str(yr)]=corrflow
+        Shodhp[str(yr)]=hp
+        Shodprec[str(yr)]=precsumdf
+        Shoddays[str(yr)]=shoddays
         SecondMx = SecondMx.join(pd.DataFrame(secondmax))
         print('Завершён год '+str(yr))
 
     
-    for var in ['Smax','S28Feb','DateSmax','DateS0','SecondMx','Shod','Shodhp']:
+    for var in ['Smax','S28Feb','DateSmax','DateS0','SecondMx','Shod','Shodhp','Shodprec','Shoddays']:
         locals()[var].to_csv(os.getcwd() + '/summaries/'+var+'_summary.csv')
 
 if __name__ == '__main__':
@@ -220,11 +235,11 @@ if __name__ == '__main__':
     print('Год конца?')
     yr2=input()
     yr1yr2=range(int(yr1),int(yr2)+1)
-    table=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/stations_leg.txt', 
-                    delimiter='\t', decimal='.',engine='python')
-    table2=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/leg_forest.csv', 
+    table=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/reg_stations_coords.csv', 
                     delimiter=',', decimal='.',engine='python')
-    stationrange = table['id'].values
-    indices = table['index'].values
-    forestvals = table2['rvalue_1'].values
-    main(yr1yr2, stationrange,indices,forestvals)
+    stationrange = table['ID'].values
+    indices = table['ID'].values
+    forestvals = table['LES'].values
+    x_coords = table['X'].values
+    y_coords = table['Y'].values
+    main(yr1yr2, stationrange,indices,forestvals,x_coords,y_coords)

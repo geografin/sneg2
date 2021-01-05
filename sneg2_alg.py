@@ -31,7 +31,7 @@ class Snow2Model(DynamicModel):
         self.mask=boolean(0)
         self.OttTemp=scalar(0)
         self.SpringMask=boolean(0)
-        self.stationmap=readmap(self.ppath+'stations.map')
+        self.stationmap=readmap(self.ppath+'stations2.map') #stations2.map - это по сетке
         self.SnowPackTime=TimeoutputTimeseries(str(self.currentyear)+'snow',self,self.stationmap,noHeader=False)
         #self.TSnowPackTime=TimeoutputTimeseries(str(self.currentyear)+'tsnow',self,self.stationmap,noHeader=False)
         self.FlowTime=TimeoutputTimeseries(str(self.currentyear)+'flow',self,self.stationmap,noHeader=False)
