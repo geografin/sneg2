@@ -213,17 +213,20 @@ def main(yr1yr2,stationrange,indices,forestvals,x_coords,y_coords):
     Shodprec = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
     Shoddays = pd.DataFrame({'XCOORD':x_coords,'YCOORD':y_coords,'IsForest':forestvals})
     for yr in yr1yr2:
-        maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf, shoddays = plotter(yr,stationrange,forestvals)
-        Smax[str(yr)]=maxsnow.values
-        S28Feb[str(yr)]=datesnow.values
-        DateSmax[str(yr)]=maxsnowdate.values
-        DateS0[str(yr)]=endsnowdate.values
-        Shod[str(yr)]=corrflow
-        Shodhp[str(yr)]=hp
-        Shodprec[str(yr)]=precsumdf
-        Shoddays[str(yr)]=shoddays
-        SecondMx = SecondMx.join(pd.DataFrame(secondmax))
-        print('Завершён год '+str(yr))
+        try:
+            maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf, shoddays = plotter(yr,stationrange,forestvals)
+            Smax[str(yr)]=maxsnow.values
+            S28Feb[str(yr)]=datesnow.values
+            DateSmax[str(yr)]=maxsnowdate.values
+            DateS0[str(yr)]=endsnowdate.values
+            Shod[str(yr)]=corrflow
+            Shodhp[str(yr)]=hp
+            Shodprec[str(yr)]=precsumdf
+            Shoddays[str(yr)]=shoddays
+            SecondMx = SecondMx.join(pd.DataFrame(secondmax))
+            print('Завершён год '+str(yr))
+        except:
+            continue
 
     
     for var in ['Smax','S28Feb','DateSmax','DateS0','SecondMx','Shod','Shodhp','Shodprec','Shoddays']:

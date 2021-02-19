@@ -11,10 +11,12 @@ import glob
 
 def ensembler():
     # calculate ansembles of models for future
-    #scenario='RCP85'
-    scenario='RCP45'
-    period='2041-2060'
-    #period='2081-2100'
+    #scenario='HIST'
+    scenario='RCP85'
+    #scenario='RCP45'
+    #period='2041-2060'
+    period='2081-2100'
+    #period='1961-2005'
     models=[]
     inputfiles = {}
     # ---------------------------------------#
@@ -84,8 +86,10 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
         stationgen(indices)
     
     for yr in range(year1,year2+1,1):
-        os.chdir(resultfolder)
         
+        
+        os.chdir(resultfolder)
+            
         data1=dt.datetime(yr,7,1) #даты 1 2 надо вынести во входящие данные
         #data2=data1+dt.timedelta(days=30)
         data2=dt.datetime(yr+1,7,15)
@@ -97,7 +101,7 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
             timesteps=366
         else:
             timesteps=365
-        
+            
         pathsave=scenario+'_'+period+'_'+model
         myModel=Snow2Model('clone.map',yr,pathsave)
         dynModel = DynamicFramework(myModel, lastTimeStep=timesteps)
@@ -106,6 +110,7 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
         for folder in folders:
             if os.path.exists(mappath+folder):
                 shutil.rmtree(mappath+folder)
+        
 
 if __name__ == '__main__':
     #writetss(1981,1982)

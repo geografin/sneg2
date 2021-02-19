@@ -26,7 +26,15 @@ def regridcdo(infile,outfile,maskfile,temp):
 #main preproc for model files nc
 #gettin index from file
 def gettintime(file):
-    startingday=dt.datetime(1850,1,1)
+    #startingday=dt.datetime(1850,1,1)
+    strt = file.GetMetadata()['time#units'].split(' ')[2]
+
+    #startingday=dt.datetime(strt.split('-')[0])
+    if strt=='1-01-01':
+        strt='0001-01-01'
+    print(strt)
+    startingday=dt.datetime.strptime(strt,'%Y-%m-%d')
+    print(startingday)
     metadata=file.GetMetadata()['NETCDF_DIM_time_VALUES']
     
     metarray=metadata.strip('}{').split(',')
