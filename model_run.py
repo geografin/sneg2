@@ -6,21 +6,26 @@ import os, shutil
 import calendar
 import pandas as pd
 import glob
+import argparse
 #Ввод путей
 
 
 def ensembler():
+    
+    
     # calculate ansembles of models for future
     #scenario='HIST'
-    scenario='RCP85'
+    #scenario='RCP85'
     #scenario='RCP45'
     #period='2041-2060'
-    period='2081-2100'
+    #period='2081-2100'
     #period='1961-2005'
+    scenario=args.scenario
+    period=args.period
     models=[]
     inputfiles = {}
     # ---------------------------------------#
-    cmnpath = '/home/hydronik/Документы/PROJECTS/SNEG2/data/models_data/MODELS/'
+    cmnpath = args.workdir+'models_data/MODELS/'
     wrkpath = cmnpath + scenario +'/' + period +'/'
     modelslist = glob.glob(wrkpath+'*')
     modelfiles = [fl[len(wrkpath):] for fl in modelslist]
@@ -40,7 +45,7 @@ def ensembler():
 def preprocessing(inputfiles,resultfolder,ppath):    
 
     #Preprocess with cdo
-    maskf='pr_Amon_ACCESS1-0_rcp85_r1i1p1_1961_90box_remapmulcyearsum.nc'
+    maskf=args.maskf
     regridcdo(inputfiles['prec'],resultfolder+'/regridded_prec.nc',ppath+maskf,0)
     regridcdo(inputfiles['temp'],resultfolder+'/regridded_temp.nc',ppath+maskf,1)
     #create clonemap file
@@ -48,7 +53,7 @@ def preprocessing(inputfiles,resultfolder,ppath):
     
 def writetss(yr):
     #create tss
-    ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+    ppath=args.workdir
     stationfiles=ppath+'stationdata/*.txt'
     date1=dt.datetime(yr,7,1)#дата с которой надо начинать запись данных
     date2=dt.datetime(yr+1,7,15)
@@ -59,20 +64,20 @@ def writetss(yr):
 
 def main(preprocflag=1,stationflag=1,mapsflag=1):
     #RUN THE MODEL
-    os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/')
-    path='/home/hydronik/Документы/PROJECTS/SNEG2/data/models_data/'
-    ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+    os.chdir(args.workdir)
+    path=args.workdir+'models_data/'
+    ppath=args.workdir
     inputfiles,model,scenario,period=ensembler()
-    result_path='/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model
+    result_path=args.workdir+scenario+'_'+period+'_'+model
     if not os.path.exists(result_path):
         os.mkdir(result_path)
-    resultfolder='/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model
+    resultfolder=args.workdir+scenario+'_'+period+'_'+model
     if not os.path.exists(resultfolder+'/mapps'):
         os.mkdir(resultfolder+'/mapps')
     mappath=resultfolder+'/mapps'
     print('Расчет ведется по сценарию {} для периода {} моделью {}'.format(scenario,period,model))
     #dstf=ppath+'regridded_input.nc'
-    #mappath='/home/hydronik/Документы/PROJECTS/SNEG2/data/rez/'
+    #mappath='/home/zaychish/Документы/PROJECTS/SNEG2/data/rez/'
     srcfiles=(resultfolder+'/regridded_temp.nc',resultfolder+'/regridded_prec.nc')
     print('Введите год начала:')
     year1=int(input())
@@ -113,7 +118,14 @@ def main(preprocflag=1,stationflag=1,mapsflag=1):
         
 
 if __name__ == '__main__':
-    #writetss(1981,1982)
-    #ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
-    #createforest(ppath+'forest.tif',ppath)
-    main(preprocflag=1,stationflag=0,mapsflag=1)
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('workdir', type=str, help='Working folder')
+    parser.add_argument('preprocflag', type=int, help='Make preproc or not')
+    parser.add_argument('stationflag', type=int, help='Make tss - only to test')
+    parser.add_argument('mapsflag', type=int, help='Create maps - basic calc')
+    parser.add_argument('maskf', type=str, help='File of mask for grid')
+    parser.add_argument('scenario', type=str, help='Choosing scenario: HIST, RCP85, RCP45')
+    parser.add_argument('period', type=str, help='Choosing period: 1961-2005, 2081-2100, 2041-2060')
+    args = parser.parse_args()
+    main(args.preprocflag,args.stationflag,args.mapsflag)

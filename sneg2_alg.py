@@ -10,8 +10,8 @@ class Snow2Model(DynamicModel):
     def __init__(self,clonemap,currentyear,pathsave):
         DynamicModel.__init__(self)
         setclone(clonemap)
-        os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+pathsave)
-        self.ppath='/home/hydronik/Документы/PROJECTS/SNEG2/data/'
+        os.chdir(args.workdir+pathsave)
+        self.ppath=args.workdir
         self.tpath=os.getcwd()+'/mapps/tas_map/'
         self.prpath=os.getcwd()+'/mapps/pr_map/'
         self.ttimepath=self.ppath+'tssdata/'+str(currentyear)+'_temp.tss'

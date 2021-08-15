@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import calendar
 import os
 from model_run import *
+import argparse
 
 def readtss(path,yr):
     
@@ -41,14 +42,14 @@ def plotter(yr,stationrange,forestvals):
     end=str(yr+1)+'-06-25'
     yr=str(yr)
     
-    pathsnow = os.getcwd()+'/'+yr+'snow.tss'
+    pathsnow = modelpath+yr+'snow.tss'
     #pathtsnow = os.getcwd() + '/'+yr+'tsnow.tss'
-    pathflow = os.getcwd() +'/'+yr+'flow.tss'
-    pathtemp = os.getcwd() + '/'+yr+'temp.tss'
-    pathprec = os.getcwd() + '/'+yr+'prec.tss'
-    pathsols = os.getcwd() + '/'+yr+'sols.tss'
-    pathliqs = os.getcwd() + '/'+yr+'liqs.tss'
-    pathliqn = os.getcwd() + '/'+yr+'liqn.tss'
+    pathflow = modelpath+yr+'flow.tss'
+    pathtemp = modelpath+yr+'temp.tss'
+    pathprec = modelpath+yr+'prec.tss'
+    pathsols = modelpath+yr+'sols.tss'
+    pathliqs = modelpath+yr+'liqs.tss'
+    pathliqn = modelpath+yr+'liqn.tss'
     snowdf = readtss(pathsnow,yr)[first:end]
     #tsnowdf = readtss(pathtsnow,yr)[first:end]
     flowdf = readtss(pathflow,yr)[first:end]
@@ -145,6 +146,9 @@ def plotter(yr,stationrange,forestvals):
     #End of SHOD procedure
 
     if printflag==1:
+        for pth in ['pics','picstables']:
+            if not os.path.exists(args.workdir+pth):
+                os.mkdir(args.workdir+pth)
         for station in stationrange:
             station=str(station)
             fig,ax = plt.subplots()
@@ -154,14 +158,14 @@ def plotter(yr,stationrange,forestvals):
             plt.xticks(rotation='vertical')
             plt.grid(True)
             plt.legend()
-            fig.savefig(os.getcwd() +yr+'_'+station+'_plot.jpeg',format='jpeg',dpi=100)
+            fig.savefig(args.workdir+ 'pics/'+yr+'_'+station+'_plot.jpeg',format='jpeg',dpi=100)
             plt.close()
             #ax2 = ax.twinx()
             #ax2.plot(liqsdf.index,liqsdf[stationname],label='liqs',color='red')
             #ax2.bar(precdf.index,precdf[stationname],label='prec')
             #ax2.plot(solsdf.index,solsdf[stationname],label='sols',color='green')
             dfout = pd.DataFrame({'data':snowdf.index,'temp':tempdf[station],'prec':precdf[station],'snow':snowdf[station],'sols':solsdf[station],'liqs':liqsdf[station],'liqn':liqndf[station],'flow':flowdf[station]})
-            dfout.to_csv(os.getcwd() +'/' +yr+'_'+station+'_out.csv')
+            dfout.to_csv(args.workdir +'picstables/' +yr+'_'+station+'_out.csv')
             #plt.legend()
             #plt.show()
             #print('.', end=' ')
@@ -197,9 +201,10 @@ maxsnow, maxsnowdate, datesnow, endsnowdate, secondmax, corrflow, hp, precsumdf,
 
 def main(yr1yr2,stationrange,indices,forestvals,x_coords,y_coords):
     inputfiles, model,scenario,period = ensembler()
-    os.chdir('/home/hydronik/Документы/PROJECTS/SNEG2/data/'+scenario+'_'+period+'_'+model)
-    if not os.path.exists(os.getcwd()+'/summaries'):
-        os.mkdir(os.getcwd()+'/summaries')
+    os.chdir(args.workdir+scenario+'_'+period+'_'+model)
+    modelpath=args.workdir+scenario+'_'+period+'_'+model+'/'
+    if not os.path.exists(args.workdir+'/summaries'):
+        os.mkdir(args.workdir+'/summaries')
     Smax = pd.DataFrame(columns=['XCOORD','YCOORD']+[str(col) for col in yr1yr2])
     Smax['XCOORD']=x_coords
     Smax['YCOORD']=y_coords
@@ -230,15 +235,26 @@ def main(yr1yr2,stationrange,indices,forestvals,x_coords,y_coords):
 
     
     for var in ['Smax','S28Feb','DateSmax','DateS0','SecondMx','Shod','Shodhp','Shodprec','Shoddays']:
-        locals()[var].to_csv(os.getcwd() + '/summaries/'+var+'_summary.csv')
+        locals()[var].to_csv(args.workdir + '/summaries/'+var+'_summary.csv')
 
 if __name__ == '__main__':
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('workdir', type=str, help='Working folder')
+    parser.add_argument('printflag', type=int, help='Make preproc or not')
+    parser.add_argument('scenario', type=str, help='Choosing scenario: HIST, RCP85, RCP45')
+    parser.add_argument('period', type=str, help='Choosing period: 1961-2005, 2081-2100, 2041-2060')
+    args = parser.parse_args()
+    
+    
+    
+    
     print('Год начала?')
     yr1=input()
     print('Год конца?')
     yr2=input()
     yr1yr2=range(int(yr1),int(yr2)+1)
-    table=pd.read_csv('/home/hydronik/Документы/PROJECTS/SNEG2/data/reg_stations_coords.csv', 
+    table=pd.read_csv(args.workdir+'reg_stations_coords.csv', 
                     delimiter=',', decimal='.',engine='python')
     stationrange = table['ID'].values
     indices = table['ID'].values
