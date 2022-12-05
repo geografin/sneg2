@@ -5,11 +5,11 @@ Program description
 
 Variables at grid nodes:
 -----------
-| As defined in algorythm | Variable name | Sense | Units |
+| As defined in algorythm | Variable name | Explanation | Units |
 |:-----------------------:|:--------------:|:-----:|:-----------------:|
-| S  | Snowpack           |  Снегозапас |    |
-| Sh | SolSnowpack        | Твердая фаза воды в снеге (льдистость?)|    |
-| g  | LiqSnowpack        | Жидкая фаза воды в снеге |   1 |
+| S  | Snowpack           |  Snowpack |    |
+| Sh | SolSnowpack        | Solid phase in snow (ice fraction)|    |
+| g  | LiqSnowpack        | Liquid phase in snow |   1 |
 | d  | LiqSnowpackNext    |  |    |
 | G  | SnowCapacity       |  |  1  |
 | T  | TEMP               |  |    |
@@ -20,8 +20,8 @@ Variables at grid nodes:
 
 Параметры:
 ----------
-| Обозначение в алгоритме | Имя переменной | Смысл | Единицы измерения |
+| As defined in algorythm | Variable name | Explanation| Units |
 |:-----------------------:|:--------------:|:-----:|:-----------------:|
-| a  | meltrate | коэффициент стаивания снега | мм/сут*градус |
+| a  | meltrate | melt coefficient for snow | mm/day*grad |
 
 
